@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><title>GOBIERNO_REGIONAL_ANCASH_CENTRAL 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0d1117;color:#e6edf3;font-size:15.6px}
+header{background:linear-gradient(135deg,#0f2644,#0d4a8a);padding:14px 26px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #1e6ec8;position:sticky;top:0;z-index:200;flex-wrap:wrap;gap:8px}
+.hl{display:flex;align-items:center;gap:12px}
+.logo{width:40px;height:40px;background:linear-gradient(135deg,#1e6ec8,#00aaff);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:19.2px;font-weight:900;color:#fff;flex-shrink:0}
+.htitle h1{font-size:18px;font-weight:700;color:#fff}
+.htitle p{font-size:13.2px;color:#8b949e;margin-top:1px}
+.hr{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.bdg{background:rgba(30,110,200,.25);border:1px solid #1e6ec8;padding:3px 10px;border-radius:20px;font-size:13.2px;color:#58a6ff;white-space:nowrap}
+.bdg.r{background:rgba(255,69,0,.2);border-color:#ff4500;color:#ff6b35}
+.bdg.g{background:rgba(30,113,69,.2);border-color:#1e7145;color:#56d364}
+.tabs{display:flex;gap:2px;padding:8px 26px 0;border-bottom:1px solid #21262d;background:#161b22;overflow-x:auto}
+.tab{padding:7px 14px;border-radius:6px 6px 0 0;cursor:pointer;font-size:14.4px;color:#8b949e;border:1px solid transparent;border-bottom:none;white-space:nowrap;flex-shrink:0;transition:all .15s}
+.tab.active{background:#0d1117;color:#e6edf3;border-color:#30363d;border-bottom-color:#0d1117}
+.tab:hover:not(.active){color:#c9d1d9;background:rgba(255,255,255,.04)}
+.panel{display:none;padding:18px 26px}.panel.active{display:block}
+/* KPI GRID */
+.kgrid{display:grid;grid-template-columns:repeat(9,1fr);gap:6px;margin-bottom:16px}
+.kpi{background:#161b22;border:1px solid #21262d;border-radius:8px;padding:10px 10px 8px;position:relative;overflow:hidden;cursor:pointer;transition:border-color .2s;min-width:0}
+.kpi:hover{border-color:#30363d}
+.kpi.clickable:hover{border-color:#1e6ec8}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--ac,#1e6ec8)}
+.klbl{font-size:9.6px;color:#8b949e;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kval{font-size:31.2px;font-weight:700;color:var(--ac,#58a6ff);line-height:1}
+.ksub{font-size:10.8px;color:#6e7681;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* CHARTS ROW */
+.r2c{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.cc{background:#161b22;border:1px solid #21262d;border-radius:10px;padding:16px}
+.ct{font-size:14.4px;font-weight:600;color:#c9d1d9;margin-bottom:12px}
+/* SEMAFORO TABLE */
+.tc{background:#161b22;border:1px solid #21262d;border-radius:10px;overflow:hidden;margin-bottom:18px}
+.thb{padding:12px 16px;border-bottom:1px solid #21262d;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.thb h3{font-size:15.6px;color:#c9d1d9}
+.srch{background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:5px 10px;color:#c9d1d9;font-size:14.4px;width:200px;outline:none}
+.srch:focus{border-color:#1e6ec8}
+.frow{padding:7px 16px;border-bottom:1px solid #21262d;display:flex;gap:5px;flex-wrap:wrap}
+.fb{padding:3px 10px;border-radius:12px;border:1px solid #30363d;font-size:13.2px;cursor:pointer;color:#8b949e;background:transparent;transition:all .15s}
+.fb.on,.fb:hover{background:#1e6ec8;color:#fff;border-color:#1e6ec8}
+.tsc{overflow-x:auto;max-height:480px;overflow-y:auto}
+table{width:100%;border-collapse:collapse;font-size:14.4px}
+thead th{padding:8px 13px;text-align:left;font-size:12px;font-weight:600;color:#8b949e;text-transform:uppercase;background:#161b22;border-bottom:1px solid #21262d;position:sticky;top:0;white-space:nowrap}
+tbody tr{border-bottom:1px solid #0d1117}
+tbody tr:hover{background:rgba(30,110,200,.06)}
+tbody td{padding:8px 13px;color:#c9d1d9;vertical-align:middle}
+.mono{font-family:Consolas,monospace;font-size:13.2px;color:#58a6ff}
+.tcell{max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* BADGES */
+.ba{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;font-weight:700;white-space:nowrap}
+.ap{background:rgba(128,128,128,.15);color:#777;border:1px solid #444}
+.ah{background:rgba(255,0,0,.25);color:#ff4444;border:1px solid #f00}
+.au{background:rgba(255,69,0,.25);color:#ff6b35;border:1px solid #ff4500}
+.apr{background:rgba(255,192,0,.2);color:#ffc000;border:1px solid #ffc000}
+.as{background:rgba(255,140,0,.2);color:#ffa040;border:1px solid #ff8c00}
+.aok{background:rgba(30,113,69,.25);color:#56d364;border:1px solid #1e7145}
+.epa{background:rgba(30,113,69,.2);color:#56d364;border:1px solid #1e7145;font-size:12px;padding:2px 7px;border-radius:10px;font-weight:600}
+.epp{background:rgba(30,110,200,.2);color:#58a6ff;border:1px solid #1e6ec8;font-size:12px;padding:2px 7px;border-radius:10px;font-weight:600}
+.epd{background:rgba(128,128,128,.2);color:#888;border:1px solid #555;font-size:12px;padding:2px 7px;border-radius:10px;font-weight:600}
+/* TIMELINE */
+.tl{display:flex;align-items:flex-start;padding:7px 0;border-bottom:1px solid #21262d}
+.tldot{width:8px;height:8px;border-radius:50%;margin:3px 10px 0 1px;flex-shrink:0}
+.tlnom{font-size:12px;font-family:monospace;color:#58a6ff}
+.tlsub{font-size:13.2px;color:#8b949e;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tlff{font-size:12px;color:#6e7681}
+.tlr{margin-left:auto;padding-left:8px;flex-shrink:0}
+/* CAL */
+.cwrap{background:#161b22;border:1px solid #21262d;border-radius:10px;overflow:hidden;margin-bottom:18px}
+.chdr{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid #21262d;flex-wrap:wrap;gap:8px}
+.cnav{display:flex;align-items:center;gap:10px}
+.cnav button{background:#0d1117;border:1px solid #30363d;color:#c9d1d9;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:16.8px;display:flex;align-items:center;justify-content:center}
+.cnav button:hover{border-color:#1e6ec8;color:#58a6ff}
+.cmo{font-size:18px;font-weight:600;color:#e6edf3;min-width:150px;text-align:center}
+.cst{font-size:13.2px;color:#6e7681}
+.cgrid{display:grid;grid-template-columns:repeat(7,1fr);border-left:1px solid #21262d;border-top:1px solid #21262d}
+.cdow{padding:7px 4px;text-align:center;font-size:12px;font-weight:600;color:#8b949e;background:#161b22;border-right:1px solid #21262d;border-bottom:1px solid #21262d;text-transform:uppercase}
+.ccell{min-height:78px;padding:5px;border-right:1px solid #21262d;border-bottom:1px solid #21262d;cursor:pointer}
+.ccell:hover{background:rgba(30,110,200,.05)}
+.ccell.other .cdn{color:#3a3a3a}
+.ccell.today{background:rgba(30,110,200,.08)}
+.ccell.today .cdn{background:#1e6ec8;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.cdn{font-size:13.2px;color:#6e7681;margin-bottom:3px;width:20px;height:20px;display:flex;align-items:center;justify-content:center}
+.cev{font-size:10.8px;padding:2px 4px;border-radius:3px;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.evh{background:rgba(255,0,0,.3);color:#ff8888;border-left:2px solid #f00}
+.evu{background:rgba(255,69,0,.25);color:#ff9966;border-left:2px solid #ff4500}
+.evpr{background:rgba(255,192,0,.2);color:#ffd060;border-left:2px solid #ffc000}
+.evs{background:rgba(255,140,0,.18);color:#ffb060;border-left:2px solid #ff8c00}
+.evok{background:rgba(30,113,69,.2);color:#70d080;border-left:2px solid #1e7145}
+.evp{background:rgba(100,100,100,.15);color:#666;border-left:2px solid #444}
+.cmor{font-size:10.8px;color:#58a6ff;padding:1px 3px}
+.dpanel{background:#161b22;border:1px solid #21262d;border-radius:10px;padding:14px;margin-bottom:18px;display:none}
+.dpanel.show{display:block}
+.dptit{font-size:15.6px;font-weight:600;color:#c9d1d9;margin-bottom:10px;display:flex;justify-content:space-between}
+.dpx{cursor:pointer;color:#555;font-size:19.2px}.dpx:hover{color:#c9d1d9}
+/* STATUS POR PROYECTO */
+.spgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.spcard{background:#161b22;border:1px solid #21262d;border-radius:10px;overflow:hidden;transition:border-color .15s}
+.spcard:hover{border-color:#30363d}
+.spcard.open{border-color:#1e6ec8}
+.sphead{padding:12px 14px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;cursor:pointer}
+.spnom{font-size:13.2px;font-family:monospace;color:#58a6ff;margin-bottom:2px}
+.sptipo{font-size:12px;color:#8b949e}
+.spdesc{font-size:13.2px;color:#c9d1d9;margin-top:3px;line-height:1.5;white-space:normal;word-break:break-word}
+.sphr{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.spmonto{font-size:13.2px;color:#ffc000;font-weight:600;white-space:nowrap}
+.spchev{color:#555;font-size:14.4px;transition:transform .2s}
+.spcard.open .spchev{transform:rotate(180deg)}
+.sprog{padding:0 14px 10px;display:flex;align-items:center;gap:8px}
+.spbg{flex:1;background:#21262d;border-radius:4px;height:6px;overflow:hidden}
+.spfill{height:100%;border-radius:4px}
+.sppct{font-size:12px;color:#8b949e;flex-shrink:0;min-width:28px;text-align:right}
+.spets{display:none;padding:0 14px 8px;border-top:1px solid #21262d;padding-top:10px}
+.spcard.open .spets{display:block}
+.sper{display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.sper:last-child{border-bottom:none}
+.spedot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.spen{font-size:12px;color:#8b949e;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.spedt{font-size:12px;color:#6e7681;flex-shrink:0;white-space:nowrap}
+.spedias{font-size:12px;font-weight:700;flex-shrink:0;min-width:30px;text-align:right}
+.spprov{display:none;padding:0 14px 12px;border-top:2px solid #1e6ec8;padding-top:10px}
+.spcard.open .spprov{display:block}
+.provhdr{font-size:12px;font-weight:700;color:#58a6ff;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.provblk{background:#0d1117;border:1px solid #21262d;border-radius:6px;padding:9px 11px;margin-bottom:7px}
+.provblk:last-child{margin-bottom:0}
+.provtop{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px}
+.provitemlbl{font-size:10.8px;color:#6e7681;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.provest{font-size:10.8px;padding:2px 7px;border-radius:8px;font-weight:700;flex-shrink:0}
+.prvc{background:rgba(30,113,69,.2);color:#56d364;border:1px solid #1e7145}
+.prvd{background:rgba(128,128,128,.2);color:#888;border:1px solid #555}
+.provrow{margin-bottom:7px;padding-bottom:7px;border-bottom:1px solid #21262d}
+.provrow:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.provnom{font-size:13.2px;color:#e6edf3;font-weight:600;margin-bottom:2px}
+.provruc{font-size:12px;color:#6e7681;margin-bottom:6px}
+.provmons{display:flex;background:#161b22;border-radius:5px;overflow:hidden}
+.provm{flex:1;padding:6px 9px;border-right:1px solid #21262d}
+.provm:last-child{border-right:none}
+.provml{font-size:10.8px;color:#6e7681;text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px}
+.provmv{font-size:14.4px;font-weight:700;color:#e6edf3}
+.provmv.pos{color:#56d364}.provmv.neg{color:#ff6b35}.provmv.neu{color:#8b949e}
+/* BOTONES DESCARGA */
+.dlbtnrow{padding:0 14px 10px;display:flex;gap:6px;display:none}
+.spcard.open .dlbtnrow{display:flex}
+.dlbtn{padding:4px 10px;background:#21262d;border:1px solid #30363d;color:#8b949e;border-radius:5px;font-size:13.2px;cursor:pointer;transition:all .15s}
+.dlbtn:hover{background:#1e6ec8;color:#fff;border-color:#1e6ec8}
+/* CRONOGRAMA */
+.cgrid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.pc{background:#0d1117;border:1px solid #21262d;border-radius:8px;padding:12px}
+.pchead{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.pcnom{font-size:13.2px;font-family:monospace;color:#58a6ff}
+.pcdesc{font-size:13.2px;color:#c9d1d9;margin-bottom:6px;line-height:1.4}
+.pcfechas{display:flex;gap:12px;padding:5px 8px;background:#161b22;border-radius:5px;font-size:12px;margin-bottom:6px}
+.er{display:flex;align-items:center;gap:5px;margin:2px 0}
+.ed{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.en{font-size:12px;color:#8b949e;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ef{font-size:12px;color:#6e7681;flex-shrink:0}
+.edia{font-size:12px;font-weight:700;flex-shrink:0;min-width:32px;text-align:right}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:#0d1117}
+::-webkit-scrollbar-thumb{background:#30363d;border-radius:3px}
+@media(max-width:900px){.kgrid{grid-template-columns:repeat(2,1fr)}.r2c,.cgrid2,.spgrid{grid-template-columns:1fr}}
+.consorcio-miembros{margin:5px 0 8px 0;padding:6px 10px;background:rgba(255,255,255,0.03);border-left:2px solid #1e6ec8;border-radius:0 6px 6px 0;}
+.consorcio-lbl{font-size:10.8px;color:#6e7681;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;}
+.consorcio-mb{font-size:13.2px;color:#8b949e;padding:2px 0;}
+</style></head><body>
+<header><div class="hl"><div class="logo">BI</div><div class="htitle"><h1>GOBIERNO_REGIONAL_ANCASH_CENTRAL — Dashboard SEACE 2026</h1><p>Portal SEACE · 13/05/2026</p></div></div><div class="hr"><span class="bdg r" id="bH"></span><span class="bdg r" id="bU"></span><span class="bdg">23 procesos · 171 etapas</span><span class="bdg g">✓ 13/05/2026</span></div></header>
+<div class="tabs"><div class="tab active" onclick="TAB('resumen')">📊 Resumen</div><div class="tab" onclick="TAB('status')">📋 Status por Proyecto</div><div class="tab" onclick="TAB('calendario')">📅 Calendario</div><div class="tab" onclick="TAB('semaforo')">🚦 Semáforo</div><div class="tab" onclick="TAB('cronograma')">🗓 Cronograma</div></div>
+<div class="panel active" id="panel-resumen"><div class="kgrid"><div class="kpi" style="--ac:#58a6ff"><div class="klbl">Total Procesos</div><div class="kval">23</div><div class="ksub">171 etapas</div></div><div class="kpi clickable" style="--ac:#bc8cff" onclick="irEtapa('form')"><div class="klbl">&#128221; Formulación Consultas</div><div class="kval" id="kForm"></div><div class="ksub">procesos activos</div></div><div class="kpi clickable" style="--ac:#ffa040" onclick="irEtapa('abs')"><div class="klbl">&#9997;&#65039; Absolución Consultas</div><div class="kval" id="kAbs"></div><div class="ksub">procesos activos</div></div><div class="kpi clickable" style="--ac:#ffc000" onclick="irEtapa('intg')"><div class="klbl">&#128203; Integración Bases</div><div class="kval" id="kIntg"></div><div class="ksub">procesos activos</div></div><div class="kpi clickable" style="--ac:#00aaff" onclick="irEtapa('regi')"><div class="klbl">&#128101; Registro Participantes</div><div class="kval" id="kRegi"></div><div class="ksub">procesos activos</div></div><div class="kpi clickable" style="--ac:#58a6ff" onclick="irEtapa('pres')"><div class="klbl">&#128228; Presentación Propuestas</div><div class="kval" id="kPres"></div><div class="ksub">procesos activos</div></div><div class="kpi clickable" style="--ac:#9f6dff" onclick="irEtapa('cali')"><div class="klbl">&#128269; Calificación y Eval.</div><div class="kval" id="kCali"></div><div class="ksub">procesos activos</div></div><div class="kpi clickable" style="--ac:#56d364" onclick="irEtapa('adj')"><div class="klbl">&#10003; Adjudicados</div><div class="kval" id="kAdj"></div><div class="ksub kval-monto" id="kAdjMonto">Contrato firmado</div></div><div class="kpi clickable" style="--ac:#555" onclick="irEtapa('des')"><div class="klbl">&#10007; Desiertos</div><div class="kval" id="kDes"></div><div class="ksub">Sin adjudicación</div></div></div><div class="r2c"><div class="cc"><div class="ct">📦 Distribución por Tipo</div><div style="height:220px;position:relative"><canvas id="cTipo"></canvas></div></div><div class="cc"><div class="ct">✅ Estado de Procesos (23)</div><div style="height:220px;position:relative"><canvas id="cEst"></canvas></div></div></div></div>
+<div class="panel" id="panel-status"><div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap"><input class="srch" id="spQ" placeholder="🔍 Buscar proyecto..." oninput="rSP()"><div style="display:flex;gap:5px;flex-wrap:wrap" id="FR1"><button class="fb on" onclick="fF(0,'todos',this)">Todos (23)</button>
+      <button class="fb" onclick="fF(0,'Bien',this)">📦 Bien (5)</button>
+      <button class="fb" onclick="fF(0,'Consultoría de Obra',this)">📐 Consultoría de Obra (5)</button>
+      <button class="fb" onclick="fF(0,'Obra',this)">🏗 Obra (5)</button>
+      <button class="fb" onclick="fF(0,'Servicio',this)">⚙ Servicio (8)</button>
+</div><div style="display:flex;gap:5px;flex-wrap:wrap" id="FR2"><button class="fb on" onclick="fF(1,'todos',this)">Todos estados</button><button class="fb" onclick="fF(1,'Adjudicado',this)">✓ Adjudicado (5)</button><button class="fb" onclick="fF(1,'En proceso',this)">▶ En proceso (15)</button><button class="fb" onclick="fF(1,'Desierto',this)">✗ Desierto (3)</button></div><button class="fb" onclick="xAll(1)">Expandir todo</button><button class="fb" onclick="xAll(0)">Contraer todo</button></div><div class="spgrid" id="spG"></div></div>
+<div class="panel" id="panel-calendario"><div class="cwrap"><div class="chdr"><div class="cnav"><button onclick="cN(-1)">&#8249;</button><div class="cmo" id="cMo"></div><button onclick="cN(1)">&#8250;</button><button onclick="cH()" style="width:auto;padding:0 10px;font-size:11px">Hoy</button><span class="cst" id="cSt"></span></div><div style="display:flex;gap:8px;align-items:center"><label style="font-size:11px;color:#8b949e;display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" id="cSA" onchange="rCal()" style="accent-color:#1e6ec8" checked>Solo pendientes</label><select id="cFT" onchange="rCal()" style="background:#0d1117;border:1px solid #30363d;color:#c9d1d9;padding:4px 8px;border-radius:6px;font-size:11px"><option value="">Todos</option><option value="Bien">Bienes</option><option value="Consultoría de Obra">Consultoría</option><option value="Obra">Obras</option><option value="Servicio">Servicios</option></select></div></div><div id="cG"></div></div><div class="dpanel" id="dp"><div class="dptit"><span id="dpT"></span><span class="dpx" onclick="document.getElementById('dp').classList.remove('show')">✕</span></div><div id="dpC"></div></div></div>
+<div class="panel" id="panel-semaforo"><div class="tc"><div class="thb"><h3>🚦 Semáforo — 171 etapas</h3><input class="srch" id="semQ" placeholder="🔍 Buscar..." oninput="rSem()"></div><div class="frow" id="FR3"><button class="fb on" onclick="fSem('todos',this)">Todos (171)</button><button class="fb" onclick="fSem('h',this)">🔴 HOY (6)</button><button class="fb" onclick="fSem('u',this)">🟠 Urgente (6)</button><button class="fb" onclick="fSem('pr',this)">🟡 Próximo (9)</button><button class="fb" onclick="fSem('s',this)">🟠 Seguim. (15)</button><button class="fb" onclick="fSem('ok',this)">🟢 OK (5)</button><button class="fb" onclick="fSem('pa',this)">⚫ Pasó (130)</button></div><div class="tsc"><table><thead><tr><th>Nomenclatura</th><th>Tipo</th><th>Etapa</th><th>Fecha Fin</th><th style="text-align:center">Días</th><th>Alerta</th></tr></thead><tbody id="semB"></tbody></table></div></div></div>
+<div class="panel" id="panel-cronograma"><div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap"><select id="crT" onchange="rCron()" style="background:#161b22;border:1px solid #30363d;color:#c9d1d9;padding:5px 9px;border-radius:6px;font-size:12px"><option value="">Todos</option><option value="Bien">Bienes</option><option value="Consultoría de Obra">Consultoría</option><option value="Obra">Obras</option><option value="Servicio">Servicios</option></select><label style="font-size:11px;color:#8b949e;display:flex;align-items:center;gap:5px"><input type="checkbox" id="crSA" onchange="rCron()" style="accent-color:#1e6ec8">Solo activos</label><span id="crCnt" style="font-size:11px;color:#6e7681"></span></div><div class="cgrid2" id="crG"></div></div>
+<script>
+const DATA=[{"nom":"SIE-SIE-3-2026-GRA-OEC-2","clave":"SIE-SIE-3-2026-GRA-OEC-2||2026-05-11 10:23","n":1,"tipo":"Bien","desc":"ADQUISICIÓN DE COMBUSTIBLE (DIESEL B5 S-50) PARA LA EJECUCIÓN DE LAS ACTIVIDADES DE EMERGENCIA DE ATENCIÓN DE LA TRASNSITABILIDAD DE LAS VÍAS Y LIMPIEZA, DESCOLMATACIÓN DE CAUSES, DEFENSAS RIBEREÑAS, SISTEMAS DE DRENAJE Y CANALES DE RIEGO EN LAS PROVINCIAS DEL DEPARTAMENTO DE ÁNCASH.","monto":"---","estado_proc":"En proceso","reiniciado":false,"fecha_pub":"2026-05-11 10:23","fecha_ini":"11/05/2026","fecha_fin":"22/05/2026","etapas":[{"e":"Convocatoria","fi":"11/05/2026","ff":"11/05/2026","d":-2,"a":"Paso","ei":""},{"e":"Registro de participantes, registro y presentación de propuestas(Electronica)","fi":"12/05/2026","ff":"20/05/2026","d":7,"a":"Proximo 3-7 dias","ei":""},{"e":"Apertura de propuestas y el periodo de lances(Electronica)","fi":"21/05/2026","ff":"21/05/2026","d":8,"a":"Seguimiento 8-15 dias","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"22/05/2026","ff":"22/05/2026","d":9,"a":"Seguimiento 8-15 dias","ei":"Convocado"}],"postores":[]},{"nom":"CP-ABR-10-2026-GRA/C-1","clave":"CP-ABR-10-2026-GRA/C-1||2026-05-07 12:25","n":2,"tipo":"Servicio","desc":"CONTRATACIÓN DEL SERVICIO EN GENERAL PARA SUPERVISIÓN DE LA ACTIVIDAD: ¿MANTENIMIENTO DE LA INFRAESTRUCTURA BASICA DE LA ALDEA SEÑOR DE LA SOLEDAD, DISTRITO DE INDEPENDENCIA, PROVINCIA DE HUARAZ -ANCASH¿","monto":"---","estado_proc":"En proceso","reiniciado":false,"fecha_pub":"2026-05-07 12:25","fecha_ini":"07/05/2026","fecha_fin":"19/05/2026","etapas":[{"e":"Convocatoria","fi":"07/05/2026","ff":"07/05/2026","d":-6,"a":"Paso","ei":""},{"e":"Formulación de consultas y observaciones(Electronica)","fi":"08/05/2026","ff":"12/05/2026","d":-1,"a":"Paso","ei":""},{"e":"Absolución de consultas y observaciones(Electronica)","fi":"13/05/2026","ff":"13/05/2026","d":0,"a":"HOY","ei":""},{"e":"Integración de las Bases","fi":"13/05/2026","ff":"13/05/2026","d":0,"a":"HOY","ei":""},{"e":"Registro de participantes(Electronica)","fi":"08/05/2026","ff":"17/05/2026","d":4,"a":"Proximo 3-7 dias","ei":""},{"e":"Presentación de propuestas(Electronica)","fi":"18/05/2026","ff":"18/05/2026","d":5,"a":"Proximo 3-7 dias","ei":""},{"e":"Calificación y Evaluación de propuestas","fi":"19/05/2026","ff":"19/05/2026","d":6,"a":"Proximo 3-7 dias","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"19/05/2026","ff":"19/05/2026","d":6,"a":"Proximo 3-7 dias","ei":"Convocado"}],"postores":[]},{"nom":"CP-ABR-11-2026-GRA/E-1","clave":"CP-ABR-11-2026-GRA/E-1||2026-05-06 18:06","n":3,"tipo":"Servicio","desc":"Contratación del servicio de fortalecimiento de capacidades mediante el ¿CURSO EN SEGUIMIENTO Y MONITOREO DE LA PRESTACIÓN DE LOS SERVICIOS DE SANEAMIENTO¿, dirigido a los responsables de las Áreas Técnicas Municipales (ATM) y promotores de saneamiento de los Gobiernos Locales del departamento de Án","monto":"---","estado_proc":"En proceso","reiniciado":false,"fecha_pub":"2026-05-06 18:06","fecha_ini":"06/05/2026","fecha_fin":"18/05/2026","etapas":[{"e":"Convocatoria","fi":"06/05/2026","ff":"06/05/2026","d":-7,"a":"Paso","ei":""},{"e":"Formulación de consultas y observaciones(Electronica)","fi":"07/05/2026","ff":"11/05/2026","d":-2,"a":"Paso","ei":""},{"e":"Absolución de consultas y observaciones(Electronica)","fi":"12/05/2026","ff":"12/05/2026","d":-1,"a":"Paso","ei":""},{"e":"Integración de las Bases","fi":"12/05/2026","ff":"12/05/2026","d":-1,"a":"Paso","ei":""},{"e":"Registro de participantes(Electronica)","fi":"07/05/2026","ff":"14/05/2026","d":1,"a":"Urgente 1-2 dias","ei":""},{"e":"Presentación de propuestas(Electronica)","fi":"15/05/2026","ff":"15/05/2026","d":2,"a":"Urgente 1-2 dias","ei":""},{"e":"Calificación y Evaluación de propuestas","fi":"18/05/2026","ff":"18/05/2026","d":5,"a":"Proximo 3-7 dias","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"18/05/2026","ff":"18/05/2026","d":5,"a":"Proximo 3-7 dias","ei":"Convocado"}],"postores":[]},{"nom":"CP SER-SM-2-2026-GRA/CS-1","clave":"CP SER-SM-2-2026-GRA/CS-1||2026-04-28 16:13","n":4,"tipo":"Servicio","desc":"CONTRATACIÓN DEL SERVICIO DE EJECUCIÓN DE LA ACTIVIDAD DENOMINADA: \"INSTALACIÓN DEL SIFONAMIENTO EN LA LAGUNAS EN FORMACIÓN (LAGUNAS C Y D) EN LA. MICROCUENCA LLACA, SUB CUENCA CASCA, DISTRITO DE INDEPENDENCIA, PROVINCIA DE HUARAZ, DEPARTAMENTO DE ANCASH¿","monto":"527,848.05Soles","estado_proc":"En proceso","reiniciado":false,"fecha_pub":"2026-04-28 16:13","fecha_ini":"02/06/2026","fecha_fin":"29/05/2026","etapas":[{"e":"Convocatoria","fi":"28/04/2026","ff":"28/04/2026","d":-15,"a":"Paso","ei":""},{"e":"Formulación de consultas y observaciones(Electronica)","fi":"29/04/2026","ff":"08/05/2026","d":-5,"a":"Paso","ei":""},{"e":"Absolución de consultas y observaciones(Electronica)","fi":"12/05/2026","ff":"12/05/2026","d":-1,"a":"Paso","ei":""},{"e":"Integración de las Bases","fi":"12/05/2026","ff":"12/05/2026","d":-1,"a":"Paso","ei":""},{"e":"Registro de participantes(Electronica)","fi":"29/04/2026","ff":"28/05/2026","d":15,"a":"Seguimiento 8-15 dias","ei":""},{"e":"Presentación de propuestas(Electronica)","fi":"29/05/2026","ff":"29/05/2026","d":16,"a":"OK mas de 15 dias","ei":""},{"e":"Calificación y Evaluación de propuestas","fi":"02/06/2026","ff":"02/06/2026","d":20,"a":"OK mas de 15 dias","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"02/06/2026","ff":"02/06/2026","d":20,"a":"OK mas de 15 dias","ei":"Convocado"}],"postores":[]},{"nom":"CP-ABR-7-2026-GRA/E-1","clave":"CP-ABR-7-2026-GRA/E-1||2026-04-27 18:45","n":5,"tipo":"Servicio","desc":"contratación de servicio de caracterización del agua de 74 Sistemas de Agua en los Centros Poblados Focalizados en la Región Ancash\" en cumplimiento al Programa Nacional de Saneamiento Rural - PNSR, en virtud a la LEY N° 32513, LEY DE PRESUPUESTO DEL SECTOR PUBLICO PARA EL AÑO FISCAL 2026.","monto":"---","estado_proc":"En proceso","reiniciado":false,"fecha_pub":"2026-04-27 18:45","fecha_ini":"07/05/2026","fecha_fin":"30/04/2026","etapas":[{"e":"Convocatoria","fi":"27/04/2026","ff":"27/04/2026","d":-16,"a":"Paso","ei":""},{"e":"Formulación de consultas y observaciones(Electronica)","fi":"28/04/2026","ff":"30/04/2026","d":-13,"a":"Paso","ei":""},{"e":"Absolución de consultas y observaciones(Electronica)","fi":"07/05/2026","ff":"07/05/2026","d":-6,"a":"Paso","ei":""},{"e":"Integración de las Bases","fi":"07/05/2026","ff":"07/05/2026","d":-6,"a":"Paso","ei":""},{"e":"Registro de participantes(Electronica)","fi":"28/04/2026","ff":"11/05/2026","d":-2,"a":"Paso","ei":""},{"e":"Presentación de propuestas(Electronica)","fi":"12/05/2026","ff":"12/05/2026","d":-1,"a":"Paso","ei":""},{"e":"Calificación y Evaluación de propuestas","fi":"13/05/2026","ff":"13/05/2026","d":0,"a":"HOY","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"13/05/2026","ff":"13/05/2026","d":0,"a":"HOY","ei":"Convocado"}],"postores":[]},{"nom":"CP-ABR-6-2026-GRA/E-1","clave":"CP-ABR-6-2026-GRA/E-1||2026-04-27 17:17","n":6,"tipo":"Servicio","desc":"Contratación del servicio de fortalecimiento de capacidades mediante el ¿CURSO DE OPERACIÓN Y MANTENIMIENTO DE LOS SERVICIOS DE SANEAMIENTO EN EL ÁMBITO RURAL - 2026¿, dirigido a operadores de los sistemas de agua potable (SAP) de las organizaciones comunales prestadoras de los servicios de saneamie","monto":"---","estado_proc":"En proceso","reiniciado":false,"fecha_pub":"2026-04-27 17:17","fecha_ini":"06/05/2026","fecha_fin":"30/04/2026","etapas":[{"e":"Convocatoria","fi":"27/04/2026","ff":"27/04/2026","d":-16,"a":"Paso","ei":""},{"e":"Formulación de consultas y observaciones(Electronica)","fi":"28/04/2026","ff":"30/04/2026","d":-13,"a":"Paso","ei":""},{"e":"Absolución de consultas y observaciones(Electronica)","fi":"06/05/2026","ff":"06/05/2026","d":-7,"a":"Paso","ei":""},{"e":"Integración de las Bases","fi":"06/05/2026","ff":"06/05/2026","d":-7,"a":"Paso","ei":""},{"e":"Registro de participantes(Electronica)","fi":"28/04/2026","ff":"10/05/2026","d":-3,"a":"Paso","ei":""},{"e":"Presentación de propuestas(Electronica)","fi":"11/05/2026","ff":"11/05/2026","d":-2,"a":"Paso","ei":""},{"e":"Calificación y Evaluación de propuestas","fi":"12/05/2026","ff":"12/05/2026","d":-1,"a":"Paso","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"12/05/2026","ff":"12/05/2026","d":-1,"a":"Paso","ei":"Convocado"}],"postores":[]},{"nom":"LP-ABR-2-2026-GRA/E-1","clave":"LP-ABR-2-2026-GRA/E-1||2026-04-27 15:31","n":7,"tipo":"Bien","desc":"ADQUISICIÓN DE 56 EQUIPOS DE CLORACIÓN POR GOTEO DE CARGA CONSTANTE DE DOBLE RECIPIENTE, PARA LA ACTIVIDAD DE POTABILIZACIÓN Y OTRAS FORMAS DE DESINFECCIÓN Y TRATAMIENTO DE AGUA EN LOS CENTROS POBLADOS FOCALIZADOS, SEGÚN EL PROGRAMA NACIONAL DE SANEAMIENTO RURAL (PNSR) EN EL ÁMBITO REGIONAL DE ÁNCAS","monto":"---","estado_proc":"En proceso","reiniciado":false,"fecha_pub":"2026-04-27 15:31","fecha_ini":"04/05/2026","fecha_fin":"30/04/2026","etapas":[{"e":"Convocatoria","fi":"27/04/2026","ff":"27/04/2026","d":-16,"a":"Paso","ei":""},{"e":"Formulación de consultas y observaciones(Electronica)","fi":"28/04/2026","ff":"30/04/2026","d":-13,"a":"Paso","ei":""},{"e":"Absolución de consultas y observaciones(Electronica)","fi":"04/05/2026","ff":"04/05/2026","d":-9,"a":"Paso","ei":""},{"e":"Integración de las Bases","fi":"04/05/2026","ff":"04/05/2026","d":-9,"a":"Paso","ei":""},{"e":"Registro de participantes(Electronica)","fi":"28/04/2026","ff":"06/05/2026","d":-7,"a":"Paso","ei":""},{"e":"Presentación de propuestas(Electronica)","fi":"07/05/2026","ff":"07/05/2026","d":-6,"a":"Paso","ei":""},{"e":"Calificación y Evaluación de propuestas","fi":"08/05/2026","ff":"08/05/2026","d":-5,"a":"Paso","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"08/05/2026","ff":"08/05/2026","d":-5,"a":"Paso","ei":"Convocado"}],"postores":[]},{"nom":"CP CON-SM-1-2026-GRA/C-1","clave":"CP CON-SM-1-2026-GRA/C-1||2026-04-24 23:36","n":8,"tipo":"Consultoría de Obra","desc":"CONTRATACIÓN DEL SERVICIO DE CONSULTORIA DE OBRA PARA LA SUPERVISION DEL SALDO DE LA OBRA: MEJORAMIENTO DEL SERVICIO DE TRANSITABILIDAD DEL CAMINO VECINAL TRAMO PUENTE PALTAY- LUCMA- COLLON- PASHPA, DISTRITO DE TARICA - PROVINCIA DE HUARAZ - DEPARTAMENTO DE ANCASH ¿ CUI N° 2544814","monto":"683,352.26Soles","estado_proc":"En proceso","reiniciado":false,"fecha_pub":"2026-04-24 23:36","fecha_ini":"12/05/2026","fecha_fin":"28/05/2026","etapas":[{"e":"Convocatoria","fi":"24/04/2026","ff":"24/04/2026","d":-19,"a":"Paso","ei":""},{"e":"Formulación de consultas y observaciones(Electronica)","fi":"25/04/2026","ff":"11/05/2026","d":-2,"a":"Paso","ei":""},{"e":"Absolución de consultas y observaciones(Electronica)","fi":"12/05/2026","ff":"12/05/2026","d":-1,"a":"Paso","ei":""},{"e":"Integración de las Bases","fi":"12/05/2026","ff":"12/05/2026","d":-1,"a":"Paso","ei":""},{"e":"Registro de participantes(Electronica)","fi":"25/04/2026","ff":"26/05/2026","d":13,"a":"Seguimiento 8-15 dias","ei":""},{"e":"Presentación de propuestas(Electronica)","fi":"27/05/2026","ff":"27/05/2026","d":14,"a":"Seguimiento 8-15 dias","ei":""},{"e":"Calificación y Evaluación de propuestas","fi":"28/05/2026","ff":"28/05/2026","d":15,"a":"Seguimiento 8-15 dias","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"28/05/2026","ff":"28/05/2026","d":15,"a":"Seguimiento 8-15 dias","ei":"Convocado"}],"postores":[]},{"nom":"CP SER-SM-1-2026-GRA/CS-1","clave":"CP SER-SM-1-2026-GRA/CS-1||2026-04-23 18:44","n":9,"tipo":"Servicio","desc":"SERVICIOS DE MANTENIMIENTO DE LA INFRAESTRUCTURA BASICA DE LA ALDEA SEÑOR DE LA SOLEDAD, DISTRITO DE INDEPENDENCIA, PROVINCIA DE HUARAZ-ANCASH","monto":"---","estado_proc":"En proceso","reiniciado":false,"fecha_pub":"2026-04-23 18:44","fecha_ini":"12/05/2026","fecha_fin":"29/05/2026","etapas":[{"e":"Convocatoria","fi":"23/04/2026","ff":"23/04/2026","d":-20,"a":"Paso","ei":""},{"e":"Formulación de consultas y observaciones(Electronica)","fi":"24/04/2026","ff":"06/05/2026","d":-7,"a":"Paso","ei":""},{"e":"Absolución de consultas y observaciones(Electronica)","fi":"12/05/2026","ff":"12/05/2026","d":-1,"a":"Paso","ei":""},{"e":"Integración de las Bases","fi":"12/05/2026","ff":"12/05/2026","d":-1,"a":"Paso","ei":""},{"e":"Registro de participantes(Electronica)","fi":"24/04/2026","ff":"25/05/2026","d":12,"a":"Seguimiento 8-15 dias","ei":""},{"e":"Presentación de propuestas(Electronica)","fi":"26/05/2026","ff":"26/05/2026","d":13,"a":"Seguimiento 8-15 dias","ei":""},{"e":"Calificación y Evaluación de propuestas","fi":"27/05/2026","ff":"29/05/2026","d":16,"a":"OK mas de 15 dias","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"29/05/2026","ff":"29/05/2026","d":16,"a":"OK mas de 15 dias","ei":"Convocado"}],"postores":[]},{"nom":"CP-ABR-5-2026-GRA/C-1","clave":"CP-ABR-5-2026-GRA/C-1||2026-04-21 23:50","n":10,"tipo":"Consultoría de Obra","desc":"CONTRATACIÓN DE CONSULTORÍA DE OBRA SUPERVISIÓN DE OBRA MEJORAMIENTO DE LOS SERVICIOS DEPORTIVOS Y DE RECREACIÓN LAW TENIS, PEDREGAL BAJO, DISTRITO DE HUARAZ - PROVINCIA DE HUARAZ - REGIÓN ANCASH","monto":"296,961.31Soles","estado_proc":"En proceso","reiniciado":false,"fecha_pub":"2026-04-21 23:50","fecha_ini":"06/05/2026","fecha_fin":"24/04/2026","etapas":[{"e":"Convocatoria","fi":"21/04/2026","ff":"21/04/2026","d":-22,"a":"Paso","ei":""},{"e":"Formulación de consultas y observaciones(Electronica)","fi":"22/04/2026","ff":"24/04/2026","d":-19,"a":"Paso","ei":""},{"e":"Absolución de consultas y observaciones(Electronica)","fi":"06/05/2026","ff":"06/05/2026","d":-7,"a":"Paso","ei":""},{"e":"Integración de las Bases","fi":"06/05/2026","ff":"06/05/2026","d":-7,"a":"Paso","ei":""},{"e":"Registro de participantes(Electronica)","fi":"22/04/2026","ff":"11/05/2026","d":-2,"a":"Paso","ei":""},{"e":"Presentación de propuestas(Electronica)","fi":"12/05/2026","ff":"12/05/2026","d":-1,"a":"Paso","ei":""},{"e":"Calificación y Evaluación de propuestas","fi":"13/05/2026","ff":"13/05/2026","d":0,"a":"HOY","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"13/05/2026","ff":"13/05/2026","d":0,"a":"HOY","ei":"Convocado"}],"postores":[]},{"nom":"LP-SM-3-2026-GRA/C-1","clave":"LP-SM-3-2026-GRA/C-1||2026-04-17 23:41","n":11,"tipo":"Obra","desc":"CONTRATACIÓN PARA LA EJECUCIÓN DEL SALDO DE OBRA: MEJORAMIENTO DEL SERVICIO DE TRANSITABILIDAD DEL CAMINO VECINAL TRAMO PUENTE PALTAY- LUCMA- COLLON- PASHPA, DISTRITO DE TARICA - PROVINCIA DE HUARAZ - DEPARTAMENTO DE ANCASH ¿ CUI N° 2544814","monto":"15,651,861.75Soles","estado_proc":"En proceso","reiniciado":false,"fecha_pub":"2026-04-17 23:41","fecha_ini":"05/05/2026","fecha_fin":"21/05/2026","etapas":[{"e":"Convocatoria","fi":"17/04/2026","ff":"17/04/2026","d":-26,"a":"Paso","ei":""},{"e":"Formulación de consultas y observaciones(Electronica)","fi":"18/04/2026","ff":"04/05/2026","d":-9,"a":"Paso","ei":""},{"e":"Absolución de consultas y observaciones(Electronica)","fi":"05/05/2026","ff":"05/05/2026","d":-8,"a":"Paso","ei":""},{"e":"Integración de las Bases","fi":"05/05/2026","ff":"05/05/2026","d":-8,"a":"Paso","ei":""},{"e":"Registro de participantes(Electronica)","fi":"18/04/2026","ff":"19/05/2026","d":6,"a":"Proximo 3-7 dias","ei":""},{"e":"Presentación de propuestas(Electronica)","fi":"20/05/2026","ff":"20/05/2026","d":7,"a":"Proximo 3-7 dias","ei":""},{"e":"Calificación y Evaluación de propuestas","fi":"21/05/2026","ff":"21/05/2026","d":8,"a":"Seguimiento 8-15 dias","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"21/05/2026","ff":"21/05/2026","d":8,"a":"Seguimiento 8-15 dias","ei":"Convocado"}],"postores":[]},{"nom":"CP-ABR-4-2026-GRA/CS.-1","clave":"CP-ABR-4-2026-GRA/CS.-1||2026-04-17 23:36","n":12,"tipo":"Consultoría de Obra","desc":"SERVICIOS DE CONSULTORIA DE OBRA PARA LA SUPERVISION DE OBRA: ¿MEJORAMIENTO Y AMPLIACION DE LOS SERVICIOS DE AGUA POTABLE Y DISPOSICION SANITARIA DE EXCRETAS EN LA LOCALIDAD DE COLCABAMBA DISTRITO DE SAN LUIS ¿ PROVINCIA DE CARLOS FERMIN FITZCARRALD ¿ DEPARTAMENTO DE ANCASH¿ CON CUI 2541963","monto":"292,476.45Soles","estado_proc":"En proceso","reiniciado":false,"fecha_pub":"2026-04-17 23:36","fecha_ini":"12/05/2026","fecha_fin":"22/05/2026","etapas":[{"e":"Convocatoria","fi":"17/04/2026","ff":"17/04/2026","d":-26,"a":"Paso","ei":""},{"e":"Formulación de consultas y observaciones(Electronica)","fi":"18/04/2026","ff":"22/04/2026","d":-21,"a":"Paso","ei":""},{"e":"Absolución de consultas y observaciones(Electronica)","fi":"12/05/2026","ff":"12/05/2026","d":-1,"a":"Paso","ei":""},{"e":"Integración de las Bases","fi":"12/05/2026","ff":"12/05/2026","d":-1,"a":"Paso","ei":""},{"e":"Registro de participantes(Electronica)","fi":"18/04/2026","ff":"14/05/2026","d":1,"a":"Urgente 1-2 dias","ei":""},{"e":"Presentación de propuestas(Electronica)","fi":"15/05/2026","ff":"15/05/2026","d":2,"a":"Urgente 1-2 dias","ei":""},{"e":"Calificación y Evaluación de propuestas","fi":"22/05/2026","ff":"22/05/2026","d":9,"a":"Seguimiento 8-15 dias","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"22/05/2026","ff":"22/05/2026","d":9,"a":"Seguimiento 8-15 dias","ei":"Convocado"}],"postores":[]},{"nom":"SIE-SIE-3-2026-GRA-OEC-1","clave":"SIE-SIE-3-2026-GRA-OEC-1||2026-04-16 16:09","n":13,"tipo":"Bien","desc":"ADQUISICIÓN DE COMBUSTIBLE (DIESEL B5 S-50) PARA LA EJECUCIÓN DE LAS ACTIVIDADES DE EMERGENCIA DE ATENCIÓN DE LA TRASNSITABILIDAD DE LAS VÍAS Y LIMPIEZA, DESCOLMATACIÓN DE CAUSES, DEFENSAS RIBEREÑAS, SISTEMAS DE DRENAJE Y CANALES DE RIEGO EN LAS PROVINCIAS DEL DEPARTAMENTO DE ÁNCASH.","monto":"---","estado_proc":"Desierto","reiniciado":false,"fecha_pub":"2026-04-16 16:09","fecha_ini":"16/04/2026","fecha_fin":"28/04/2026","etapas":[{"e":"Convocatoria","fi":"16/04/2026","ff":"16/04/2026","d":-27,"a":"Paso","ei":""},{"e":"Registro de participantes, registro y presentación de propuestas(Electronica)","fi":"17/04/2026","ff":"24/04/2026","d":-19,"a":"Paso","ei":""},{"e":"Apertura de propuestas y el periodo de lances(Electronica)","fi":"27/04/2026","ff":"27/04/2026","d":-16,"a":"Paso","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"28/04/2026","ff":"28/04/2026","d":-15,"a":"Paso","ei":"Desierto"}],"postores":[{"item_n":1,"item_desc":"DIESEL B5 S-50       Codigo CUBSO: 1510150500233280 Cantidad: 21806 - Galon Reserva Para MYPE: NO Paquete: NO    Denominación del Bien o Servicio Común DIÉSEL B5 S-50   VR / VE / Cuantía de la contratación ---    Estado: Desierto                Accio","estado":"Desierto","vr":"---","ruc":"","nombre":"Sin postor","cant":"","monto":"","ahorro":null,"ahorro_pct":null}]},{"nom":"LP-SM-1-2026-GRA/CS.-1","clave":"LP-SM-1-2026-GRA/CS.-1||2026-04-14 22:19","n":14,"tipo":"Obra","desc":"EJECUCION DE OBRA \"MEJORAMIENTO Y REMODELACIÓN DE LOS SERVICIOS EDUCATIVOS DE LA GRAN UNIDAD ESCOLAR MARISCAL TORIBIO DE LUZURIAGA, DISTRITO DE INDEPENDENCIA, PROVINCIA DE HUARAZ - ANCASH\" CON CUI N°2184924","monto":"171,807,265.62Soles","estado_proc":"En proceso","reiniciado":false,"fecha_pub":"2026-04-14 22:19","fecha_ini":"14/04/2026","fecha_fin":"30/04/2026","etapas":[{"e":"Convocatoria","fi":"14/04/2026","ff":"14/04/2026","d":-29,"a":"Paso","ei":""},{"e":"Formulación de consultas y observaciones(Electronica)","fi":"15/04/2026","ff":"24/04/2026","d":-19,"a":"Paso","ei":""},{"e":"Absolución de consultas y observaciones(Electronica)","fi":"30/04/2026","ff":"30/04/2026","d":-13,"a":"Paso","ei":""},{"e":"Integración de las Bases","fi":"30/04/2026","ff":"30/04/2026","d":-13,"a":"Paso","ei":""},{"e":"Registro de participantes(Electronica)","fi":"15/04/2026","ff":"14/05/2026","d":1,"a":"Urgente 1-2 dias","ei":""},{"e":"Presentación de propuestas(Electronica)","fi":"15/05/2026","ff":"15/05/2026","d":2,"a":"Urgente 1-2 dias","ei":""},{"e":"Calificación y Evaluación de propuestas","fi":"18/05/2026","ff":"22/05/2026","d":9,"a":"Seguimiento 8-15 dias","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"22/05/2026","ff":"22/05/2026","d":9,"a":"Seguimiento 8-15 dias","ei":"Convocado"}],"postores":[{"item_n":1,"item_desc":"EJECUCION DE LA OBRA \"MEJORAMIENTO Y REMODELACION DE LOS SERVICIOS EDUCATIVOS DE LA GRAN UNIDAD ESCOLAR MARISCAL TORIBIO DE LUZURIAGA, DISTRITO DE INDEPENDENCIA, PROVINCIA DE HUARAZ - ANCASH¿ CON CUI 2184924       Codigo CUBSO: 7212140600359845 Canti","estado":"Nulo","vr":"172,144,077.48","ruc":"","nombre":"Sin postor","cant":"","monto":"","ahorro":null,"ahorro_pct":null}]},{"nom":"CP-ABR-2-2026-GRA/CS-1","clave":"CP-ABR-2-2026-GRA/CS-1||2026-03-13 20:08","n":15,"tipo":"Consultoría de Obra","desc":"SERVICIO CONSULTORIA DE OBRA PARA LA ELABORACIÓN DEL EXPEDIENTE TÉCNICO DEL SALDO DE OBRA DEL PROYECTO: MEJORAMIENTO DE LA I.E. N 86840 MAESTRO DIVINO DE WECRONCOCHA, DISTRITO DE ACOCHACA, PROVINCIA DE ASUNCION ¿ ANCASH CON CUI N° 2244876¿","monto":"432,800.00Soles","estado_proc":"Adjudicado","reiniciado":false,"fecha_pub":"2026-03-13 20:08","fecha_ini":"01/04/2026","fecha_fin":"31/03/2026","etapas":[{"e":"Convocatoria","fi":"13/03/2026","ff":"13/03/2026","d":-61,"a":"Paso","ei":""},{"e":"Formulación de consultas y observaciones(Electronica)","fi":"14/03/2026","ff":"18/03/2026","d":-56,"a":"Paso","ei":""},{"e":"Absolución de consultas y observaciones(Electronica)","fi":"27/03/2026","ff":"27/03/2026","d":-47,"a":"Paso","ei":""},{"e":"Integración de las Bases","fi":"27/03/2026","ff":"27/03/2026","d":-47,"a":"Paso","ei":""},{"e":"Registro de participantes(Electronica)","fi":"14/03/2026","ff":"31/03/2026","d":-43,"a":"Paso","ei":""},{"e":"Presentación de propuestas(Electronica)","fi":"01/04/2026","ff":"01/04/2026","d":-42,"a":"Paso","ei":""},{"e":"Calificación y Evaluación de propuestas","fi":"06/04/2026","ff":"05/05/2026","d":-8,"a":"Paso","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"05/05/2026","ff":"05/05/2026","d":-8,"a":"Paso","ei":"Adjudicado"}],"postores":[{"item_n":1,"item_desc":"SERVICIO CONSULTORIA DE OBRA PARA LA ELABORACIÓN DEL EXPEDIENTE TÉCNICO DEL SALDO DE OBRA DEL PROYECTO: MEJORAMIENTO DE LA I.E. N 86840 MAESTRO DIVINO DE WECRONCOCHA, DISTRITO DE ACOCHACA, PROVINCIA DE ASUNCION ¿ ANCASH CON CUI N° 2244876¿       Codi","estado":"Adjudicado","vr":"432,800.00","ruc":"CONSORCIO","nombre":"CONSORCIO VEAL","cant":"1.00","monto":"389,520.01","ahorro":43279.99,"ahorro_pct":10.0},{"item_n":1,"item_desc":"SERVICIO CONSULTORIA DE OBRA PARA LA ELABORACIÓN DEL EXPEDIENTE TÉCNICO DEL SALDO DE OBRA DEL PROYECTO: MEJORAMIENTO DE LA I.E. N 86840 MAESTRO DIVINO DE WECRONCOCHA, DISTRITO DE ACOCHACA, PROVINCIA DE ASUNCION ¿ ANCASH CON CUI N° 2244876¿       Codi","estado":"Adjudicado","vr":"432,800.00","ruc":"10403887493","nombre":"VELASQUEZ VASQUEZ EMILIO FELIX","cant":"nan","monto":"nan","ahorro":null,"ahorro_pct":null},{"item_n":1,"item_desc":"SERVICIO CONSULTORIA DE OBRA PARA LA ELABORACIÓN DEL EXPEDIENTE TÉCNICO DEL SALDO DE OBRA DEL PROYECTO: MEJORAMIENTO DE LA I.E. N 86840 MAESTRO DIVINO DE WECRONCOCHA, DISTRITO DE ACOCHACA, PROVINCIA DE ASUNCION ¿ ANCASH CON CUI N° 2244876¿       Codi","estado":"Adjudicado","vr":"432,800.00","ruc":"10082377978","nombre":"ALVAREZ VILLAR PERCY ENRIQUE","cant":"nan","monto":"nan","ahorro":null,"ahorro_pct":null}]},{"nom":"CP-ABR-3-2026-GRA/CS.-1","clave":"CP-ABR-3-2026-GRA/CS.-1||2026-04-07 18:29","n":16,"tipo":"Servicio","desc":"SERVICIO DE SUPERVISION DE LA ACTIVIDAD \"MANTENIMIENTO Y ADECUACIÓN DE LOS AMBIENTES ADMINISTRATIVOS Y COMPLEMENTARIOS DE LA DIRECCIÓN REGIONAL DE TRABAJO Y PROMOCIÓN DEL EMPLEO DEL GOBIERNO REGIONAL DE ANCASH, DISTRITO HUARAZ - HUARAZ-ANCASH\"","monto":"---","estado_proc":"En proceso","reiniciado":false,"fecha_pub":"2026-04-07 18:29","fecha_ini":"07/04/2026","fecha_fin":"17/04/2026","etapas":[{"e":"Convocatoria","fi":"07/04/2026","ff":"07/04/2026","d":-36,"a":"Paso","ei":""},{"e":"Formulación de consultas y observaciones(Electronica)","fi":"08/04/2026","ff":"10/04/2026","d":-33,"a":"Paso","ei":""},{"e":"Absolución de consultas y observaciones(Electronica)","fi":"13/04/2026","ff":"13/04/2026","d":-30,"a":"Paso","ei":""},{"e":"Integración de las Bases","fi":"13/04/2026","ff":"13/04/2026","d":-30,"a":"Paso","ei":""},{"e":"Registro de participantes(Electronica)","fi":"08/04/2026","ff":"15/04/2026","d":-28,"a":"Paso","ei":""},{"e":"Presentación de propuestas(Electronica)","fi":"16/04/2026","ff":"16/04/2026","d":-27,"a":"Paso","ei":""},{"e":"Calificación y Evaluación de propuestas","fi":"17/04/2026","ff":"17/04/2026","d":-26,"a":"Paso","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"17/04/2026","ff":"17/04/2026","d":-26,"a":"Paso","ei":"Convocado"}],"postores":[]},{"nom":"SIE-SIE-2-2026-GRA/DEC-1","clave":"SIE-SIE-2-2026-GRA/DEC-1||2026-03-12 17:21","n":17,"tipo":"Bien","desc":"ADQUISICIÓN DE BIENES DE AYUDA HUMANITARIA (VÍVERES SECOS) PARA ATENCIÓN FRENTE A EMERGENCIAS Y/O DESASTRES A POBLACIÓN DAMNIFICADA Y/O AFECTADA EN EL DEPARTAMENTO DE ÁNCASH","monto":"206,800.00Soles","estado_proc":"Adjudicado","reiniciado":false,"fecha_pub":"2026-03-12 17:21","fecha_ini":"12/03/2026","fecha_fin":"24/03/2026","etapas":[{"e":"Convocatoria","fi":"12/03/2026","ff":"12/03/2026","d":-62,"a":"Paso","ei":""},{"e":"Registro de participantes, registro y presentación de propuestas(Electronica)","fi":"13/03/2026","ff":"20/03/2026","d":-54,"a":"Paso","ei":""},{"e":"Apertura de propuestas y el periodo de lances(Electronica)","fi":"23/03/2026","ff":"23/03/2026","d":-51,"a":"Paso","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"24/03/2026","ff":"24/03/2026","d":-50,"a":"Paso","ei":"Contratado"}],"postores":[{"item_n":1,"item_desc":"ADQUISICIÓN DE BIENES DE AYUDA HUMANITARIA (VÍVERES SECOS) PARA ATENCIÓN FRENTE A EMERGENCIAS Y/O DESASTRES A POBLACIÓN DAMNIFICADA Y/O AFECTADA EN EL DEPARTAMENTO DE ÁNCASH       Codigo CUBSO:  Cantidad: 1 - Unidad Reserva Para MYPE: S/N Paquete: SI","estado":"Contratado","vr":"206,800.00","ruc":"20604130680","nombre":"AGROSERVICIOS E INVERSIONES COLLCA S.R.L.","cant":"1.00","monto":"196,000.00","ahorro":10800.0,"ahorro_pct":5.22}]},{"nom":"DIRECTA-DIRECTA-1-2026-GRA/DEC-1","clave":"DIRECTA-DIRECTA-1-2026-GRA/DEC-1||2026-03-10 10:21","n":18,"tipo":"Servicio","desc":"CONTRATACIÓN DEL SERVICIO DE ALQUILER DE AMBIENTES ADMINISTRATIVOS PARA EL GOBIERNO REGIONAL DE ANCASH","monto":"504,000.00Soles","estado_proc":"Adjudicado","reiniciado":false,"fecha_pub":"2026-03-10 10:21","fecha_ini":"10/03/2026","fecha_fin":"20/03/2026","etapas":[{"e":"Invitación","fi":"10/03/2026","ff":"10/03/2026","d":-64,"a":"Paso","ei":""},{"e":"Presentación de propuestas(Electronica)","fi":"19/03/2026","ff":"19/03/2026","d":-55,"a":"Paso","ei":""},{"e":"Adjudicación","fi":"20/03/2026","ff":"20/03/2026","d":-54,"a":"Paso","ei":"Contratado"}],"postores":[{"item_n":1,"item_desc":"CONTRATACIÓN DEL SERVICIO DE ALQUILER DE AMBIENTES ADMINISTRATIVOS PARA EL GOBIERNO REGIONAL DE ANCASH       Codigo CUBSO: 8013150200094977 Cantidad: 1 - Servicio Reserva Para MYPE: NO Paquete: NO    Denominación del Bien o Servicio Común    VR / VE ","estado":"Contratado","vr":"504,000.00","ruc":"10316124416","nombre":"MELGAREJO RODRIGUEZ NOE DAUT","cant":"1.00","monto":"504,000.00","ahorro":0.0,"ahorro_pct":0.0}]},{"nom":"LP-SM-2-2026-GRA/CS.-1","clave":"LP-SM-2-2026-GRA/CS.-1||2026-03-04 23:10","n":19,"tipo":"Obra","desc":"EJECUCION DE OBRA ¿MEJORAMIENTO DE LOS SERVICIOS DEPORTIVOS Y DE RECREACIÓN LAW TENIS, PEDREGAL BAJO, DISTRITO DE HUARAZ - PROVINCIA DE HUARAZ - REGIÓN ANCASH¿ CON CUI 2400707","monto":"---","estado_proc":"En proceso","reiniciado":false,"fecha_pub":"2026-03-04 23:10","fecha_ini":"04/03/2026","fecha_fin":"28/04/2026","etapas":[{"e":"Convocatoria","fi":"04/03/2026","ff":"04/03/2026","d":-70,"a":"Paso","ei":""},{"e":"Formulación de consultas y observaciones(Electronica)","fi":"05/03/2026","ff":"17/03/2026","d":-57,"a":"Paso","ei":""},{"e":"Absolución de consultas y observaciones(Electronica)","fi":"17/04/2026","ff":"17/04/2026","d":-26,"a":"Paso","ei":""},{"e":"Integración de las Bases","fi":"17/04/2026","ff":"17/04/2026","d":-26,"a":"Paso","ei":""},{"e":"Registro de participantes(Electronica)","fi":"05/03/2026","ff":"27/04/2026","d":-16,"a":"Paso","ei":""},{"e":"Presentación de propuestas(Electronica)","fi":"28/04/2026","ff":"28/04/2026","d":-15,"a":"Paso","ei":""},{"e":"Calificación y Evaluación de propuestas","fi":"29/04/2026","ff":"06/05/2026","d":-7,"a":"Paso","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"06/05/2026","ff":"06/05/2026","d":-7,"a":"Paso","ei":"Convocado"}],"postores":[]},{"nom":"LP-SM-1-2026-GRA/CS.-1","clave":"LP-SM-1-2026-GRA/CS.-1 [REINICIADO]||2026-03-04 20:25","n":20,"tipo":"Obra","desc":"EJECUCION DE OBRA \"MEJORAMIENTO Y REMODELACIÓN DE LOS SERVICIOS EDUCATIVOS DE LA GRAN UNIDAD ESCOLAR MARISCAL TORIBIO DE LUZURIAGA, DISTRITO DE INDEPENDENCIA, PROVINCIA DE HUARAZ - ANCASH\" CON CUI N°2184924","monto":"172,144,077.48Soles","estado_proc":"Desierto","reiniciado":true,"fecha_pub":"2026-03-04 20:25","fecha_ini":"04/03/2026","fecha_fin":"27/03/2026","etapas":[{"e":"Convocatoria","fi":"04/03/2026","ff":"04/03/2026","d":-70,"a":"Paso","ei":""},{"e":"Convocatoria","fi":"04/03/2026","ff":"04/03/2026","d":-70,"a":"Paso","ei":""},{"e":"Formulación de consultas y observaciones(Electronica)","fi":"05/03/2026","ff":"23/03/2026","d":-51,"a":"Paso","ei":""},{"e":"Formulación de consultas y observaciones(Electronica)","fi":"05/03/2026","ff":"23/03/2026","d":-51,"a":"Paso","ei":""},{"e":"Absolución de consultas y observaciones(Electronica)","fi":"27/03/2026","ff":"27/03/2026","d":-47,"a":"Paso","ei":""},{"e":"Integración de las Bases","fi":"27/03/2026","ff":"27/03/2026","d":-47,"a":"Paso","ei":""},{"e":"Absolución de consultas y observaciones(Electronica)","fi":"27/03/2026","ff":"27/03/2026","d":-47,"a":"Paso","ei":""},{"e":"Integración de las Bases","fi":"27/03/2026","ff":"27/03/2026","d":-47,"a":"Paso","ei":""},{"e":"Registro de participantes(Electronica)","fi":"05/03/2026","ff":"08/04/2026","d":-35,"a":"Paso","ei":""},{"e":"Registro de participantes(Electronica)","fi":"05/03/2026","ff":"08/04/2026","d":-35,"a":"Paso","ei":""},{"e":"Presentación de propuestas(Electronica)","fi":"09/04/2026","ff":"09/04/2026","d":-34,"a":"Paso","ei":""},{"e":"Presentación de propuestas(Electronica)","fi":"09/04/2026","ff":"09/04/2026","d":-34,"a":"Paso","ei":""},{"e":"Calificación y Evaluación de propuestas","fi":"13/04/2026","ff":"13/04/2026","d":-30,"a":"Paso","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"13/04/2026","ff":"13/04/2026","d":-30,"a":"Paso","ei":"Nulo"},{"e":"Calificación y Evaluación de propuestas","fi":"13/04/2026","ff":"13/04/2026","d":-30,"a":"Paso","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"13/04/2026","ff":"13/04/2026","d":-30,"a":"Paso","ei":"Nulo"}],"postores":[]},{"nom":"SIE-SIE-1-2026-GRA/DEC-1","clave":"SIE-SIE-1-2026-GRA/DEC-1||2026-02-10 18:47","n":21,"tipo":"Bien","desc":"CONTRATACION DEL SUMINISTRO DE COMBUSTIBLE PARA LAS UNIDADES VEHICULARES DEL GOBIERNO REGIONAL DE ANCASH - SEDE CENTRAL, PARA EL CONSUMO DEL AÑO 2026","monto":"282,360.00Soles","estado_proc":"Adjudicado","reiniciado":false,"fecha_pub":"2026-02-10 18:47","fecha_ini":"02/03/2026","fecha_fin":"19/02/2026","etapas":[{"e":"Convocatoria","fi":"10/02/2026","ff":"10/02/2026","d":-92,"a":"Paso","ei":""},{"e":"Registro de participantes, registro y presentación de propuestas(Electronica)","fi":"11/02/2026","ff":"18/02/2026","d":-84,"a":"Paso","ei":""},{"e":"Apertura de propuestas y el periodo de lances(Electronica)","fi":"19/02/2026","ff":"19/02/2026","d":-83,"a":"Paso","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"02/03/2026","ff":"02/03/2026","d":-72,"a":"Paso","ei":"Contratado"}],"postores":[{"item_n":1,"item_desc":"CONTRATACION DEL SUMINISTRO DE COMBUSTIBLE PARA LAS UNIDADES VEHICULARES DEL GOBIERNO REGIONAL DE ANCASH - SEDE CENTRAL, PARA EL CONSUMO DEL AÑO 2026       Codigo CUBSO:  Cantidad: 18000 - Unidad Reserva Para MYPE: S/N Paquete: SI    Denominación del","estado":"Contratado","vr":"282,360.00","ruc":"20449344261","nombre":"VALEX S.R.LTDA.","cant":"18,000.00","monto":"262,200.00","ahorro":20160.0,"ahorro_pct":7.14}]},{"nom":"CP-ABR-1-2026-GRA/CS-1","clave":"CP-ABR-1-2026-GRA/CS-1||2026-02-24 19:33","n":22,"tipo":"Consultoría de Obra","desc":"SERVICIOS DE CONSULTORIA DE OBRA PARA LA SUPERVISION DE OBRA: ¿MEJORAMIENTO DEL SERVICIO EDUCATIVO DE LA I.E N° 84162 DEL NIVEL PRIMARIA Y SECUNDARIA DE LA LOCALIDAD DE RURIS, DISTRITO DE SAN NICOLAS - PROVINCIA DE CARLOS FERMÍN FITZCARRALD ¿DEPARTAMENTO DE ANCASH¿ CUI N°2454232","monto":"224,260.00Soles","estado_proc":"Desierto","reiniciado":false,"fecha_pub":"2026-02-24 19:33","fecha_ini":"03/03/2026","fecha_fin":"27/02/2026","etapas":[{"e":"Convocatoria","fi":"24/02/2026","ff":"24/02/2026","d":-78,"a":"Paso","ei":""},{"e":"Formulación de consultas y observaciones(Electronica)","fi":"25/02/2026","ff":"27/02/2026","d":-75,"a":"Paso","ei":""},{"e":"Absolución de consultas y observaciones(Electronica)","fi":"03/03/2026","ff":"03/03/2026","d":-71,"a":"Paso","ei":""},{"e":"Integración de las Bases","fi":"03/03/2026","ff":"03/03/2026","d":-71,"a":"Paso","ei":""},{"e":"Registro de participantes(Electronica)","fi":"25/02/2026","ff":"05/03/2026","d":-69,"a":"Paso","ei":""},{"e":"Presentación de propuestas(Electronica)","fi":"06/03/2026","ff":"06/03/2026","d":-68,"a":"Paso","ei":""},{"e":"Calificación y Evaluación de propuestas","fi":"09/03/2026","ff":"17/04/2026","d":-26,"a":"Paso","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"17/04/2026","ff":"17/04/2026","d":-26,"a":"Paso","ei":"Desierto"}],"postores":[{"item_n":1,"item_desc":"SERVICIOS DE CONSULTORIA DE OBRA PARA LA SUPERVISION DE OBRA: ¿MEJORAMIENTO DEL SERVICIO EDUCATIVO DE LA I.E N° 84162 DEL NIVEL PRIMARIA Y SECUNDARIA DE LA LOCALIDAD DE RURIS, DISTRITO DE SAN NICOLAS - PROVINCIA DE CARLOS FERMÍN FITZCARRALD ¿DEPARTAM","estado":"Desierto","vr":"224,260.00","ruc":"","nombre":"Sin postor","cant":"","monto":"","ahorro":null,"ahorro_pct":null}]},{"nom":"LP-ABR-1-2026-GRA/E-1","clave":"LP-ABR-1-2026-GRA/E-1||2026-02-10 17:28","n":23,"tipo":"Obra","desc":"CONTRATACIÓN DE LA EJECUCIÓN DEL SALDO DE OBRA BAJO EL SISTEMA DE ENTREGA DE SOLO CONSTRUCCIÓN DE LA OBRA: \"MEJORAMIENTO DEL SERVICIO EDUCATIVO DE LA L.E. N° 84162 DEL NIVEL PRIMARIA Y SECUNDARIA DE LA LOCALIDAD DE RURIS, DISTRITO DE SAN NICOLÁS, PROVINCIA DE CARLOS FERMIN FITZCARRALD, DEPARTAMENTO","monto":"6,882,791.72Soles","estado_proc":"Adjudicado","reiniciado":false,"fecha_pub":"2026-02-10 17:28","fecha_ini":"10/02/2026","fecha_fin":"20/02/2026","etapas":[{"e":"Convocatoria","fi":"10/02/2026","ff":"10/02/2026","d":-92,"a":"Paso","ei":""},{"e":"Formulación de consultas y observaciones(Electronica)","fi":"11/02/2026","ff":"13/02/2026","d":-89,"a":"Paso","ei":""},{"e":"Absolución de consultas y observaciones(Electronica)","fi":"16/02/2026","ff":"16/02/2026","d":-86,"a":"Paso","ei":""},{"e":"Integración de las Bases","fi":"16/02/2026","ff":"16/02/2026","d":-86,"a":"Paso","ei":""},{"e":"Registro de participantes(Electronica)","fi":"11/02/2026","ff":"18/02/2026","d":-84,"a":"Paso","ei":""},{"e":"Presentación de propuestas(Electronica)","fi":"19/02/2026","ff":"19/02/2026","d":-83,"a":"Paso","ei":""},{"e":"Calificación y Evaluación de propuestas","fi":"20/02/2026","ff":"20/02/2026","d":-82,"a":"Paso","ei":""},{"e":"Otorgamiento de la Buena Pro","fi":"20/02/2026","ff":"20/02/2026","d":-82,"a":"Paso","ei":"Adjudicado"}],"postores":[{"item_n":1,"item_desc":"CONTRATACIÓN DE LA EJECUCIÓN DEL SALDO DE OBRA BAJO EL SISTEMA DE ENTREGA DE SOLO CONSTRUCCIÓN DE LA OBRA: \"MEJORAMIENTO DEL SERVICIO EDUCATIVO DE LA L.E. N° 84162 DEL NIVEL PRIMARIA Y SECUNDARIA DE LA LOCALIDAD DE RURIS, DISTRITO DE SAN NICOLÁS, PRO","estado":"Adjudicado","vr":"6,882,791.72","ruc":"CONSORCIO","nombre":"CONSORCIO RURIS","cant":"1.00","monto":"6,824,964.33","ahorro":57827.39,"ahorro_pct":0.84},{"item_n":1,"item_desc":"CONTRATACIÓN DE LA EJECUCIÓN DEL SALDO DE OBRA BAJO EL SISTEMA DE ENTREGA DE SOLO CONSTRUCCIÓN DE LA OBRA: \"MEJORAMIENTO DEL SERVICIO EDUCATIVO DE LA L.E. N° 84162 DEL NIVEL PRIMARIA Y SECUNDARIA DE LA LOCALIDAD DE RURIS, DISTRITO DE SAN NICOLÁS, PRO","estado":"Adjudicado","vr":"6,882,791.72","ruc":"20532066388","nombre":"INVERSIONES NASHIMAT S.A.C.","cant":"nan","monto":"nan","ahorro":null,"ahorro_pct":null},{"item_n":1,"item_desc":"CONTRATACIÓN DE LA EJECUCIÓN DEL SALDO DE OBRA BAJO EL SISTEMA DE ENTREGA DE SOLO CONSTRUCCIÓN DE LA OBRA: \"MEJORAMIENTO DEL SERVICIO EDUCATIVO DE LA L.E. N° 84162 DEL NIVEL PRIMARIA Y SECUNDARIA DE LA LOCALIDAD DE RURIS, DISTRITO DE SAN NICOLÁS, PRO","estado":"Adjudicado","vr":"6,882,791.72","ruc":"20103751692","nombre":"CH CONTRATISTAS GENERALES S.R.L.","cant":"nan","monto":"nan","ahorro":null,"ahorro_pct":null}]}];
+const KPI={"form": 0, "abs": 1, "intg": 0, "regi": 8, "pres": 0, "cali": 6, "adj": 5, "des": 3, "tot": 23};
+const N_PROCS=23,N_ETAPAS=171;
+const SEM={"paso": 130, "hoy": 6, "urg": 6, "prox": 9, "seg": 15, "ok": 5};
+const EP_ADJ=5,EP_ENP=15,EP_DES=3;
+const TC_DATA=[["Servicio", 8], ["Bien", 5], ["Consultor\u00eda de Obra", 5], ["Obra", 5]];
+
+const FLAT=DATA.flatMap(function(p,pi){return p.etapas.map(function(e){return Object.assign({},e,{nom:p.nom,tipo:p.tipo,desc:p.desc,monto:p.monto,ep:p.estado_proc,pi:pi});});});
+var AC={'Paso':'#555','HOY':'#ff0000','Urgente 1-2 dias':'#ff4500','Proximo 3-7 dias':'#ffc000','Seguimiento 8-15 dias':'#ff8c00','OK mas de 15 dias':'#1e7145'};
+function ac(a){return AC[a]||'#555';}
+function acls(a){var m={'Paso':'ap','HOY':'ah','Urgente 1-2 dias':'au','Proximo 3-7 dias':'apr','Seguimiento 8-15 dias':'as','OK mas de 15 dias':'aok'};return m[a]||'ap';}
+function evc(a){var m={'HOY':'evh','Urgente 1-2 dias':'evu','Proximo 3-7 dias':'evpr','Seguimiento 8-15 dias':'evs','OK mas de 15 dias':'evok','Paso':'evp'};return m[a]||'evp';}
+function albl(a){var m={'Urgente 1-2 dias':'Urgente','Proximo 3-7 dias':'Proximo','Seguimiento 8-15 dias':'Seguim.','OK mas de 15 dias':'OK +15d','HOY':'HOY','Paso':'Paso'};return m[a]||a;}
+function ds(d){return d>=9999?'—':d>=0?'+'+d+'d':d+'d';}
+function mf(m){if(!m||m==='---'||m==='nan')return '—';var n=parseFloat(m.toString().replace(/,/g,''));return isNaN(n)?m:'S/ '+n.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});}
+var MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+var DOW=['Dom','Lun','Mar','Mie','Jue','Vie','Sab'];
+function pF(s){if(!s)return null;var p=s.split('/');return p.length===3?new Date(+p[2],+p[1]-1,+p[0]):null;}
+
+(function(){
+  var h=FLAT.filter(function(e){return e.a==='HOY';}).length;
+  var u=FLAT.filter(function(e){return e.a==='Urgente 1-2 dias';}).length;
+  if(h){var bh=document.getElementById('bH');if(bh)bh.textContent='🔴 '+h+' vencen HOY';}
+  if(u){var bu=document.getElementById('bU');if(bu)bu.textContent='🟠 '+u+' urgentes';}
+})();
+
+window.addEventListener('load',function(){
+  Chart.defaults.color='#8b949e';
+  Chart.defaults.font.family='Segoe UI,Arial,sans-serif';
+  (function(){
+    var COLORS=['#1e6ec8','#56d364','#bc8cff','#ffa040','#ffc000','#ff6b35'];
+    var tipoLabels=TC_DATA.map(function(t){return t[0]+' ('+t[1]+')';});
+    var tipoVals=TC_DATA.map(function(t){return t[1];});
+    var tipoBg=tipoLabels.map(function(_,i){return COLORS[i%COLORS.length];});
+    new Chart('cTipo',{type:'pie',data:{labels:tipoLabels,datasets:[{data:tipoVals,backgroundColor:tipoBg,borderColor:'#161b22',borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10,font:{size:12}}}}}});
+    var estLabels=['Adjudicado ('+EP_ADJ+')','En proceso ('+EP_ENP+')','Desierto ('+EP_DES+')'];
+    var estVals=[EP_ADJ,EP_ENP,EP_DES];
+    var estBg=['#1e7145','#1e6ec8','#555'];
+    var estLF=[],estVF=[],estBF=[];
+    for(var i=0;i<estVals.length;i++){if(estVals[i]>0){estLF.push(estLabels[i]);estVF.push(estVals[i]);estBF.push(estBg[i]);}}
+    new Chart('cEst',{type:'pie',data:{labels:estLF,datasets:[{data:estVF,backgroundColor:estBF,borderColor:'#161b22',borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10,font:{size:12}}}}}});
+  })();
+  document.getElementById('kForm').textContent=KPI.form;
+  document.getElementById('kAbs').textContent=KPI.abs;
+  document.getElementById('kIntg').textContent=KPI.intg;
+  document.getElementById('kRegi').textContent=KPI.regi;
+  document.getElementById('kPres').textContent=KPI.pres;
+  document.getElementById('kCali').textContent=KPI.cali;
+  document.getElementById('kAdj').textContent=KPI.adj;
+  var adjM=DATA.filter(function(p){return p.estado_proc==='Adjudicado';}).reduce(function(s,p){
+    var mPost=p.postores.reduce(function(sp,pr){var mp=parseFloat((pr.monto||'').toString().replace(/,/g,''));return sp+(isNaN(mp)?0:mp);},0);
+    if(mPost>0) return s+mPost;
+    var m=parseFloat((p.monto||'').toString().replace(/,/g,''));return s+(isNaN(m)?0:m);
+  },0);
+  var adjEl=document.getElementById('kAdjMonto');if(adjEl&&adjM>0)adjEl.textContent='S/ '+adjM.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('kDes').textContent=KPI.des;
+  rSP(); rSem(); rCron(); iCal();
+});
+
+var KPI_ETAPA_MAP={
+  form:['Formulación de consultas y observaciones(Electronica)'],
+  abs:['Absolución de consultas y observaciones(Electronica)'],
+  intg:['Integración de las Bases'],
+  regi:['Registro de participantes(Electronica)','Registro de participantes(Presencial)'],
+  pres:['Presentación de propuestas(Electronica)','Presentación de propuestas(Presencial)','Presentación de ofertas(Electronica)'],
+  cali:['Calificación y Evaluación de propuestas','Evaluación y calificación']
+};
+function irEtapa(key){
+  TAB('status');
+  document.getElementById('spQ').value='';
+  spF='todos'; spFE='todos';
+  document.querySelectorAll('#FR1 .fb').forEach(function(b){b.classList.remove('on');});
+  document.querySelector('#FR1 .fb').classList.add('on');
+  document.querySelectorAll('#FR2 .fb').forEach(function(b){b.classList.remove('on');});
+  document.querySelector('#FR2 .fb').classList.add('on');
+  var filtered;
+  if(key==='adj'){spFE='Adjudicado';filtered=DATA.filter(function(p){return p.estado_proc==='Adjudicado';});document.querySelectorAll('#FR2 .fb')[1].classList.add('on');}
+  else if(key==='des'){spFE='Desierto';filtered=DATA.filter(function(p){return p.estado_proc==='Desierto';});document.querySelectorAll('#FR2 .fb')[3].classList.add('on');}
+  else{
+    var etapas=KPI_ETAPA_MAP[key]||[];
+    filtered=DATA.filter(function(p){
+      // Find active stage = the pending stage with min dias_restantes (excl. BP)
+      var pend=p.etapas.filter(function(e){return e.d>=0&&e.e.indexOf('Buena Pro')<0&&e.e.indexOf('Adjudicaci')<0;});
+      if(!pend.length) return false;
+      var activa=pend.reduce(function(a,b){return a.d<=b.d?a:b;});
+      return etapas.indexOf(activa.e)>=0;
+    });
+  }
+  document.getElementById('spG').innerHTML=filtered.map(function(p){return spCard(p,DATA.indexOf(p));}).join('');
+  setTimeout(function(){document.querySelectorAll('.spcard').forEach(function(c){c.classList.add('open');});},50);
+}
+
+var spF='todos',spFE='todos';
+function fF(which,val,btn){
+  if(which===0)spF=val;else spFE=val;
+  var gid=which===0?'FR1':'FR2';
+  document.querySelectorAll('#'+gid+' .fb').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  rSP();
+}
+function xAll(v){document.querySelectorAll('.spcard').forEach(function(c){c.classList.toggle('open',!!v);});}
+function rSP(){
+  var q=(document.getElementById('spQ').value||'').toLowerCase();
+  var pr=DATA;
+  if(spF!=='todos')pr=pr.filter(function(p){return p.tipo===spF;});
+  if(spFE!=='todos')pr=pr.filter(function(p){return p.estado_proc===spFE;});
+  if(q)pr=pr.filter(function(p){return p.nom.toLowerCase().indexOf(q)>=0||p.desc.toLowerCase().indexOf(q)>=0;});
+  document.getElementById('spG').innerHTML=pr.map(function(p){return spCard(p,DATA.indexOf(p));}).join('');
+}
+function spCard(p,idx){
+  var tot=p.etapas.length,pas=p.etapas.filter(function(e){return e.d<0;}).length;
+  var pct=tot?Math.round(pas/tot*100):0;
+  var mu=null,ord={'HOY':0,'Urgente 1-2 dias':1,'Proximo 3-7 dias':2,'Seguimiento 8-15 dias':3,'OK mas de 15 dias':4,'Paso':5};
+  p.etapas.filter(function(e){return e.d>=0;}).forEach(function(e){if(!mu||(ord[e.a]||9)<(ord[mu.a]||9))mu=e;});
+  var bc=mu?ac(mu.a):'#1e7145';
+  var epB=p.estado_proc==='Adjudicado'?'<span class="epa">Adjudicado</span>':p.estado_proc==='Desierto'?'<span class="epd">Desierto</span>':p.estado_proc==='En proceso'?'<span class="epp">En proceso</span>':'';
+  var etH=p.etapas.map(function(e){
+    return '<div class="sper"><div class="spedot" style="background:'+ac(e.a)+'"></div>'
+      +'<div class="spen">'+e.e.replace('(Electronica)','').replace('(Presencial)','').trim()+'</div>'
+      +'<div class="spedt">'+e.fi+'→'+e.ff+'</div>'
+      +'<div class="spedias" style="color:'+ac(e.a)+'">'+ds(e.d)+'</div>'
+      +'<span class="ba '+acls(e.a)+'" style="font-size:10.8px;margin-left:4px">'+albl(e.a)+'</span></div>';
+  }).join('');
+  var prH='';
+  var prs=p.postores||[];
+  // Incluir TODOS los ítems: adjudicados/consentidos/contratados Y desiertos
+  var ESTADOS_CONOCIDOS=['contratado','adjudicado','consentido','desierto','sin postor','nulo'];
+  var adj=prs.filter(function(pr){return ESTADOS_CONOCIDOS.indexOf((pr.estado||'').toLowerCase())>=0;});
+  if(adj.length>0){
+    var grp={};
+    adj.forEach(function(pr){var k=pr.item_n;if(!grp[k])grp[k]=[];grp[k].push(pr);});
+    var blks=Object.keys(grp).map(function(k){
+      var pl=grp[k],pr0=pl[0];
+      var eL=(pr0.estado||'').toLowerCase();
+      var ec=eL==='desierto'||eL==='sin postor'||eL==='nulo'?'prvd':'prvc';
+      var eL2=(pr0.estado||'').toLowerCase();
+      var esDesierto=eL2==='desierto'||eL2==='sin postor'||eL2==='nulo';
+      var rows;
+      if(esDesierto){
+        rows='<div class="provrow provrow-des"><div class="provnom" style="color:#888;font-style:italic">Sin postor registrado</div>'
+          +'<div class="provruc" style="color:#666">VR: '+(pr0.vr&&pr0.vr!=='---'&&pr0.vr!=='nan'?'S/ '+pr0.vr:'—')+'</div></div>';
+      } else {
+        var ganadores=pl.filter(function(pr){
+          return (pr.monto&&pr.monto!==''&&pr.monto!=='---'&&pr.monto!=='nan')||pr.ruc==='CONSORCIO';
+        });
+        if(ganadores.length===0) ganadores=pl;
+        rows=ganadores.map(function(pr){
+          var mA=pr.monto&&pr.monto!=='---'&&pr.monto!=='nan'?mf(pr.monto.replace(/,/g,'')):'—';
+          var vrS=pr.vr&&pr.vr!=='---'&&pr.vr!=='nan'?'S/ '+pr.vr:'—';
+          var ap=pr.ahorro_pct==null?'neu':pr.ahorro_pct>0?'pos':'neg';
+          var as2=pr.ahorro_pct!=null?(pr.ahorro_pct>=0?'▼ ':'▲ ')+Math.abs(pr.ahorro_pct).toFixed(2)+'%':'—';
+          var esC=pr.ruc==='CONSORCIO';
+          var mH='';
+          if(esC){
+            var mbs=pl.filter(function(x){return x!==pr&&x.item_n===pr.item_n&&x.ruc!=='CONSORCIO'&&(!x.monto||x.monto===''||x.monto==='---'||x.monto==='nan');});
+            if(mbs.length>0) mH='<div class="consorcio-miembros"><div class="consorcio-lbl">Integrantes:</div>'+mbs.map(function(mb){return '<div class="consorcio-mb">• '+mb.nombre+'</div>';}).join('')+'</div>';
+          }
+          return '<div class="provrow"><div class="provnom">'+pr.nombre+'</div>'
+            +'<div class="provruc">'+(esC?'Consorcio':'RUC: '+pr.ruc)+'</div>'+mH
+            +'<div class="provmons">'
+            +'<div class="provm"><div class="provml">VR Item</div><div class="provmv">'+vrS+'</div></div>'
+            +'<div class="provm"><div class="provml">Monto adj.</div><div class="provmv">'+mA+'</div></div>'
+            +'<div class="provm"><div class="provml">Ahorro</div><div class="provmv '+ap+'">'+as2+'</div></div>'
+            +'</div></div>';
+        }).join('');
+      }
+      var id2=pr0.item_desc?pr0.item_desc.substring(0,60):'';
+      return '<div class="provblk"><div class="provtop"><span class="provitemlbl">Item '+k+(id2?' — '+id2+'...':'')+'</span><span class="provest '+ec+'">'+pr0.estado+'</span></div>'+rows+'</div>';
+    }).join('');
+    var nAdj2=adj.filter(function(pr){return ['contratado','adjudicado','consentido'].indexOf((pr.estado||'').toLowerCase())>=0;}).length;
+    var nDes2=adj.filter(function(pr){var eL3=(pr.estado||'').toLowerCase();return eL3==='desierto'||eL3==='sin postor'||eL3==='nulo';}).length;
+    var nItems2=Object.keys(grp).length;
+    var tituloItems='Ítems del proceso — '+nItems2+(nDes2>0?' ('+nAdj2+' adj. · '+nDes2+' desierto'+(nDes2!==1?'s':'')+')'  :'');
+    prH='<div class="spprov"><div class="provhdr">'+tituloItems+'</div>'+blks+'</div>';
+  }
+  var montoHTML=p.monto&&p.monto!=='---'&&p.monto!=='nan'?'<div class="spmonto">'+mf(p.monto)+'</div>':'';
+  // Use data-idx for download buttons to avoid escaping p.nom in onclick
+  var dlRow='<div class="dlbtnrow">'
+    +'<button class="dlbtn" data-idx="'+idx+'" onclick="dlCSV(this.getAttribute(\'data-idx\'))">📥 CSV</button>'
+    +'<button class="dlbtn" data-idx="'+idx+'" onclick="dlPrint(this.getAttribute(\'data-idx\'))">🖨 Imprimir</button>'
+    +'</div>';
+  return '<div class="spcard">'
+    +'<div class="sphead" onclick="this.parentElement.classList.toggle(\'open\')">'
+    +'<div style="min-width:0"><div class="spnom">'+p.nom+'</div><div class="sptipo">'+p.tipo+'</div><div class="spdesc">'+p.desc+'</div></div>'
+    +'<div class="sphr">'+epB+montoHTML+'<span class="spchev">▼</span></div>'
+    +'</div>'
+    +'<div class="sprog"><div class="spbg"><div class="spfill" style="width:'+pct+'%;background:'+bc+'"></div></div><div class="sppct" style="color:'+bc+'">'+pct+'%</div></div>'
+    +dlRow
+    +'<div class="spets">'+etH+'</div>'
+    +prH
+    +'</div>';
+}
+function dlCSV(idx){
+  var p=DATA[parseInt(idx)]; if(!p)return;
+  var NL=String.fromCharCode(10),COM=',';
+  var rows=[['SEDAPAL 2026 - '+p.nom],['Descripcion',p.desc],['Tipo',p.tipo],['Monto VR',p.monto],['Estado',p.estado_proc],['Fecha inicio',p.fecha_ini],['Fecha fin',p.fecha_fin],[''],['Etapa','Fecha Inicio','Fecha Fin','Dias','Alerta']];
+  p.etapas.forEach(function(e){rows.push([e.e,e.fi,e.ff,e.d<9999?e.d:'',albl(e.a)]);});
+  if(p.postores&&p.postores.length){
+    rows.push([''],['PROVEEDORES'],['Item','Estado','VR Item','Proveedor','RUC','Monto Adj','Ahorro Pct']);
+    p.postores.forEach(function(pr){rows.push([pr.item_n,pr.estado,pr.vr,pr.nombre,pr.ruc,pr.monto,pr.ahorro_pct!=null?pr.ahorro_pct.toFixed(2)+'%':'']);});
+  }
+  var csv=rows.map(function(row){return row.map(function(cell){var s=String(cell||'');s=s.split('"').join('""');return (s.indexOf(COM)>=0||s.indexOf('"')>=0)?'"'+s+'"':s;}).join(COM);}).join(NL);
+  var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=p.nom.replace(/[^a-zA-Z0-9]/g,'_')+'.csv';
+  a.click();URL.revokeObjectURL(a.href);
+}
+function dlPrint(idx){
+  var p=DATA[parseInt(idx)]; if(!p)return;
+  var cl=function(c){var m={'Paso':'#888','HOY':'#ff4444','Urgente 1-2 dias':'#ff6b35','Proximo 3-7 dias':'#ffc000','Seguimiento 8-15 dias':'#ffa040','OK mas de 15 dias':'#1e7145'};return m[c]||'#aaa';};
+  var ep=p.estado_proc==='Adjudicado'?'Adjudicado':p.estado_proc==='Desierto'?'Desierto':'En proceso';
+  var epC=p.estado_proc==='Adjudicado'?'#1e7145':p.estado_proc==='Desierto'?'#666':'#1e6ec8';
+  var etH=p.etapas.map(function(e){return '<tr><td style="padding:6px 10px;border-bottom:1px solid #eee;font-size:14.4px">'+e.e+'</td><td style="padding:6px 10px;border-bottom:1px solid #eee;font-size:14.4px;text-align:center">'+e.fi+'</td><td style="padding:6px 10px;border-bottom:1px solid #eee;font-size:14.4px;text-align:center">'+e.ff+'</td><td style="padding:6px 10px;border-bottom:1px solid #eee;font-size:14.4px;text-align:center;font-weight:700;color:'+cl(e.a)+'">'+ds(e.d)+'</td><td style="padding:6px 10px;border-bottom:1px solid #eee"><span style="background:'+cl(e.a)+'22;color:'+cl(e.a)+';padding:2px 8px;border-radius:8px;font-size:13.2px;font-weight:700">'+albl(e.a)+'</span></td></tr>';}).join('');
+  var adjP=(p.postores||[]).filter(function(pr){return ['contratado','adjudicado','consentido'].indexOf((pr.estado||'').toLowerCase())>=0;});
+  var prvH=adjP.length>0?'<h3 style="margin:20px 0 8px;color:#0d4a8a;font-size:16.8px;border-bottom:2px solid #0d4a8a;padding-bottom:4px">Proveedores Adjudicados</h3><table style="width:100%;border-collapse:collapse"><thead><tr style="background:#0d4a8a;color:#fff"><th style="padding:7px 10px;font-size:14.4px;text-align:left">Proveedor</th><th style="padding:7px 10px;font-size:14.4px">RUC</th><th style="padding:7px 10px;font-size:14.4px">Estado</th><th style="padding:7px 10px;font-size:14.4px">VR Item</th><th style="padding:7px 10px;font-size:14.4px">Monto Adj.</th><th style="padding:7px 10px;font-size:14.4px">Ahorro</th></tr></thead><tbody>'+adjP.map(function(pr){return '<tr><td style="padding:5px 10px;border-bottom:1px solid #eee;font-size:14.4px">'+pr.nombre+'</td><td style="padding:5px 10px;border-bottom:1px solid #eee;font-size:13.2px">'+pr.ruc+'</td><td style="padding:5px 10px;border-bottom:1px solid #eee;font-size:14.4px">'+pr.estado+'</td><td style="padding:5px 10px;border-bottom:1px solid #eee;font-size:14.4px">S/ '+pr.vr+'</td><td style="padding:5px 10px;border-bottom:1px solid #eee;font-size:14.4px;font-weight:700">'+mf(pr.monto?pr.monto.replace(/,/g,''):'')+'</td><td style="padding:5px 10px;border-bottom:1px solid #eee;font-size:14.4px;font-weight:700;color:'+(pr.ahorro_pct!=null&&pr.ahorro_pct>=0?'#1e7145':'#cc0000')+'">'+( pr.ahorro_pct!=null?pr.ahorro_pct.toFixed(2)+'%':'—')+'</td></tr>';}).join('')+'</tbody></table>':'';
+  var doc='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+p.nom+'</title><style>body{font-family:Segoe UI,Arial,sans-serif;padding:28px;background:#fff;color:#1a1a2e;max-width:960px;margin:0 auto}@media print{@page{size:A4 landscape;margin:1.5cm}}.hdr{background:linear-gradient(135deg,#0d4a8a,#1e6ec8);color:#fff;padding:20px 24px;border-radius:10px;margin-bottom:18px}.hdr h1{font-size:14.4px;font-family:monospace;margin:0 0 4px;opacity:.8}.hdr h2{font-size:21.6px;margin:0}.igrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}.ibox{background:#f4f6fb;border:1px solid #dde3f0;border-radius:8px;padding:10px 14px}.il{font-size:12px;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}.iv{font-size:16.8px;font-weight:700;color:#0d4a8a}h3{color:#0d4a8a;font-size:16.8px;border-bottom:2px solid #0d4a8a;padding-bottom:4px;margin:18px 0 10px}table{width:100%;border-collapse:collapse}thead{background:#0d4a8a;color:#fff}thead th{padding:8px 10px;text-align:left;font-size:14.4px}.foot{margin-top:24px;font-size:12px;color:#aaa;border-top:1px solid #eee;padding-top:8px}</style></head><body>';
+  doc+='<div class="hdr"><h1>'+p.nom+'</h1><h2>'+p.desc+'</h2><div style="margin-top:10px;display:flex;gap:10px"><span style="background:rgba(255,255,255,.2);padding:3px 12px;border-radius:14px;font-size:14.4px">'+p.tipo+'</span><span style="background:'+epC+'44;border:1px solid rgba(255,255,255,.4);color:#fff;padding:3px 12px;border-radius:14px;font-size:14.4px;font-weight:700">'+ep+'</span></div></div>';
+  doc+='<div class="igrid"><div class="ibox"><div class="il">Monto VR</div><div class="iv">'+mf(p.monto)+'</div></div><div class="ibox"><div class="il">Fecha Inicio</div><div class="iv">'+(p.fecha_ini||'—')+'</div></div><div class="ibox"><div class="il">Fecha Fin</div><div class="iv">'+(p.fecha_fin||'—')+'</div></div><div class="ibox"><div class="il">N Etapas</div><div class="iv">'+p.etapas.length+'</div></div></div>';
+  doc+='<h3>Cronograma de Etapas</h3><table><thead><tr><th>Etapa</th><th>Inicio</th><th>Fin</th><th>Dias</th><th>Estado</th></tr></thead><tbody>'+etH+'</tbody></table>';
+  doc+=prvH;
+  doc+='<div class="foot">SEDAPAL 2026 · Portal SEACE · '+new Date().toLocaleDateString('es-PE')+'</div></body></html>';
+  var w=window.open('','_blank');w.document.write(doc);w.document.close();
+  setTimeout(function(){w.print();},600);
+}
+var calY=2026,calM=4;
+function iCal(){
+  var cnt={};
+  FLAT.filter(function(e){return e.d>=0&&e.a!=='Paso';}).forEach(function(e){var f=pF(e.ff);if(!f)return;var k=f.getFullYear()+'-'+f.getMonth();cnt[k]=(cnt[k]||0)+1;});
+  if(Object.keys(cnt).length){var best=Object.entries(cnt).sort(function(a,b){return b[1]-a[1];})[0][0].split('-').map(Number);calY=best[0];calM=best[1];}
+  rCal();
+}
+function cN(d){calM+=d;if(calM>11){calM=0;calY++;}if(calM<0){calM=11;calY--;}rCal();}
+function cH(){var h=new Date();calY=h.getFullYear();calM=h.getMonth();rCal();}
+function rCal(){
+  var ft=document.getElementById('cFT').value,sa=document.getElementById('cSA').checked;
+  document.getElementById('cMo').textContent=MESES[calM]+' '+calY;
+  var p1=new Date(calY,calM,1),pl=new Date(calY,calM+1,0),sd=p1.getDay();
+  var hoy=new Date();hoy.setHours(0,0,0,0);
+  var evs=FLAT.filter(function(e){var f=pF(e.ff);if(!f||f.getFullYear()!==calY||f.getMonth()!==calM)return false;if(sa&&(e.d<0||e.a==='Paso'))return false;if(ft&&e.tipo!==ft)return false;return true;});
+  var tot=evs.length,crit=evs.filter(function(e){return e.a==='HOY'||e.a==='Urgente 1-2 dias';}).length;
+  document.getElementById('cSt').textContent=tot+' hito'+(tot!==1?'s':'')+' este mes'+(crit?' · '+crit+' critico'+(crit!==1?'s':''):'');
+  var pd={};evs.forEach(function(e){var d=pF(e.ff).getDate();if(!pd[d])pd[d]=[];pd[d].push(e);});
+  var po={'HOY':0,'Urgente 1-2 dias':1,'Proximo 3-7 dias':2,'Seguimiento 8-15 dias':3,'OK mas de 15 dias':4,'Paso':5};
+  Object.keys(pd).forEach(function(k){pd[k].sort(function(x,y){return (po[x.a]||9)-(po[y.a]||9);});});
+  var dp2=new Date(calY,calM,0).getDate(),tc=Math.ceil((sd+pl.getDate())/7)*7;
+  var CAL_EV=[];
+  var h='<div class="cgrid">';
+  DOW.forEach(function(d){h+='<div class="cdow">'+d+'</div>';});
+  for(var i=0;i<tc;i++){
+    var dia,em=true;
+    if(i<sd){dia=dp2-sd+i+1;em=false;}
+    else if(i>=sd+pl.getDate()){dia=i-sd-pl.getDate()+1;em=false;}
+    else dia=i-sd+1;
+    var mc=em?calM:(i<sd?calM-1:calM+1);
+    var fc=new Date(calY,mc,dia),eh=fc.getTime()===hoy.getTime();
+    var ev=em?(pd[dia]||[]):[],MX=3,ex=ev.length-MX;
+    var tc2=ev.some(function(e){return e.a==='HOY'||e.a==='Urgente 1-2 dias';}),tp=!tc2&&ev.some(function(e){return e.a==='Proximo 3-7 dias';});
+    var cls='ccell';if(!em)cls+=' other';if(eh)cls+=' today';
+    var st=tc2?'border-top:2px solid #ff4500;':tp?'border-top:2px solid #ffc000;':'';
+    var cidx=CAL_EV.length;CAL_EV.push(ev);
+    h+='<div class="'+cls+'" style="'+st+'" onclick="showDP('+cidx+')"><div class="cdn">'+dia+'</div>';
+    for(var ei=0;ei<Math.min(MX,ev.length);ei++){var e=ev[ei];var nc=e.nom.replace(/-\d{4}-SEDAPAL-\d+/g,'');var ec2=e.e.replace('(Electronica)','').trim().substring(0,18);h+='<div class="cev '+evc(e.a)+'">'+nc+': '+ec2+'</div>';}
+    if(ex>0)h+='<div class="cmor">+'+ex+' mas</div>';
+    h+='</div>';
+  }
+  document.getElementById('cG').innerHTML=h+'</div>';
+  window._CAL_EV=CAL_EV;
+}
+function showDP(cidx){
+  var evs=window._CAL_EV&&window._CAL_EV[cidx];
+  if(!evs||!evs.length)return;
+  document.getElementById('dpT').textContent=evs.length+' etapa'+(evs.length!==1?'s':'')+' en este dia';
+  document.getElementById('dpC').innerHTML=evs.map(function(e){return '<div class="tl"><div class="tldot" style="background:'+ac(e.a)+'"></div><div style="min-width:0;flex:1"><div class="tlnom">'+e.nom+'</div><div class="tlsub" style="color:#c9d1d9;white-space:normal">'+e.e+'</div><div class="tlff" style="white-space:normal">'+e.desc+'</div></div><div class="tlr"><span class="ba '+acls(e.a)+'">'+ds(e.d)+'</span></div></div>';}).join('');
+  var dpe=document.getElementById('dp');dpe.classList.add('show');dpe.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+var SF='todos';
+function fSem(f,btn){SF=f;document.querySelectorAll('#FR3 .fb').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');rSem();}
+function rSem(){
+  var q=(document.getElementById('semQ').value||'').toLowerCase();
+  var M={h:'HOY',u:'Urgente 1-2 dias',pr:'Proximo 3-7 dias',s:'Seguimiento 8-15 dias',ok:'OK mas de 15 dias',pa:'Paso'};
+  var r=FLAT;
+  if(SF!=='todos')r=r.filter(function(e){return e.a===M[SF];});
+  if(q)r=r.filter(function(e){return e.nom.toLowerCase().indexOf(q)>=0||e.e.toLowerCase().indexOf(q)>=0;});
+  document.getElementById('semB').innerHTML=r.map(function(e){return '<tr><td style="font-size:13.2px;font-family:monospace;color:#58a6ff;white-space:normal;min-width:160px">'+e.nom+'<div style="font-size:12px;color:#c9d1d9;font-family:sans-serif;margin-top:2px;white-space:normal">'+e.desc+'</div></td><td style="font-size:12px;color:#8b949e;white-space:nowrap;vertical-align:top">'+e.tipo+'</td><td style="font-size:14.4px;color:#c9d1d9;white-space:normal;min-width:200px;vertical-align:top">'+e.e+'</td><td style="white-space:nowrap;vertical-align:top">'+e.ff+'</td><td style="text-align:center;font-weight:700;color:'+ac(e.a)+';vertical-align:top">'+e.d+'</td><td style="vertical-align:top"><span class="ba '+acls(e.a)+'">'+albl(e.a)+'</span></td></tr>';}).join('');
+}
+function rCron(){
+  var t=document.getElementById('crT').value,sa=document.getElementById('crSA').checked;
+  var r=DATA;
+  if(t)r=r.filter(function(p){return p.tipo===t;});
+  if(sa)r=r.filter(function(p){return p.etapas.some(function(e){return e.d>=0;});});
+  document.getElementById('crCnt').textContent='('+r.length+' procesos)';
+  document.getElementById('crG').innerHTML=r.map(function(p){
+    var epB=p.estado_proc==='Adjudicado'?'<span class="epa" style="font-size:12px">Adj.</span>':p.estado_proc==='Desierto'?'<span class="epd" style="font-size:12px">Des.</span>':p.estado_proc==='En proceso'?'<span class="epp" style="font-size:12px">En proc.</span>':'';
+    return '<div class="pc"><div class="pchead"><div><div class="pcnom">'+p.nom+'</div><div style="font-size:12px;color:#8b949e">'+p.tipo+'</div></div><div style="text-align:right">'+(p.monto&&p.monto!=='---'&&p.monto!=='nan'?'<div style="font-size:13.2px;color:#ffc000;font-weight:600">'+mf(p.monto)+'</div>':'')+epB+'</div></div><div class="pcdesc">'+p.desc.substring(0,180)+(p.desc.length>180?'...':'')+'</div><div class="pcfechas"><div><span style="color:#6e7681">Inicio:</span> <span style="color:#c9d1d9;font-weight:600">'+(p.fecha_ini||'—')+'</span></div><div><span style="color:#6e7681">Fin:</span> <span style="color:#c9d1d9;font-weight:600">'+(p.fecha_fin||'—')+'</span></div></div>'+p.etapas.map(function(e){return '<div class="er"><div class="ed" style="background:'+ac(e.a)+'"></div><div class="en">'+e.e+'</div><div class="ef">'+e.fi+' → '+e.ff+'</div><div class="edia" style="color:'+ac(e.a)+'">'+ds(e.d)+'</div></div>';}).join('')+'</div>';
+  }).join('');
+}
+function TAB(t){
+  var tabs=['resumen','status','calendario','semaforo','cronograma'];
+  document.querySelectorAll('.tab').forEach(function(el,i){el.classList.toggle('active',tabs[i]===t);});
+  document.querySelectorAll('.panel').forEach(function(el){el.classList.remove('active');});
+  document.getElementById('panel-'+t).classList.add('active');
+}
+</script>
+</body></html>
