@@ -259,28 +259,16 @@ function irEtapa(key){
   else if(key==='des'){spFE='Desierto';filtered=DATA.filter(function(p){return 'Desierto,Nulo'.indexOf(p.estado_proc)>=0;});document.querySelectorAll('#FR2 .fb')[3].classList.add('on');}
   else{
     var etapas=KPI_ETAPA_MAP[key]||[];
-    // Replicar exactamente la lógica del KPI Python:
-    // 1. Sin etapas pendientes → va a cali por defecto
-    // 2. Etapa activa en el grupo → pertenece al grupo
-    // 3. Etapa activa no reconocida → va a cali por defecto
-    var TODOS_GRUPOS=['Formulación de consultas y observaciones(Electronica)',
-      'Absolución de consultas y observaciones(Electronica)','Integración de las Bases',
-      'Registro de participantes(Electronica)','Registro de participantes(Presencial)',
-      'Presentación de propuestas(Electronica)','Presentación de propuestas(Presencial)',
-      'Presentación de ofertas(Electronica)',
-      'Calificación y Evaluación de propuestas','Evaluación y calificación'];
+    var TODOS_GRUPOS=Object.keys(KPI_ETAPA_MAP).reduce(function(acc,k){return acc.concat(KPI_ETAPA_MAP[k]);},[]);
+    var ESTADOS_FIN='Adjudicado,Contratado,Consentido,Desierto,Nulo';
     filtered=DATA.filter(function(p){
-      if(p.estado_proc==='Adjudicado'||p.estado_proc==='Desierto') return false;
-      var pend=p.etapas.filter(function(e){
-        return e.d>=0&&e.e.indexOf('Buena Pro')<0&&e.e.indexOf('Adjudicaci')<0;
-      });
-      // Sin etapas pendientes → cali por defecto
+      var ep=p.estado_proc||'';
+      if(ep&&ESTADOS_FIN.indexOf(ep)>=0) return false;
+      var pend=p.etapas.filter(function(e){return e.d>=0&&e.e.indexOf('Buena Pro')<0&&e.e.indexOf('Adjudicaci')<0;});
       if(!pend.length) return key==='cali';
       var activa=pend.reduce(function(a,b){return a.d<=b.d?a:b;});
-      // Etapa activa reconocida → verificar si pertenece al grupo solicitado
       if(TODOS_GRUPOS.indexOf(activa.e)>=0) return etapas.indexOf(activa.e)>=0;
-      // Etapa activa NO reconocida → cali por defecto
-      return key==='cali';
+      return activa.e.indexOf('egistro')>=0?key==='regi':key==='cali';
     });
   }
   document.getElementById('spG').innerHTML=filtered.map(function(p){return spCard(p,DATA.indexOf(p));}).join('');
